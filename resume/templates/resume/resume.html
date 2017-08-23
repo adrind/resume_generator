@@ -1,0 +1,28 @@
+
+{% extends "./base.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="row" id="resume-preview">
+        <div class="col">
+            <div class="row mt-4" v-for="item in resume">
+                <div class="input" v-bind:class="{hidden: !item.isActive}">
+                    <h2 class="h2-heading"><strong>[item.message]</strong></h2>
+                    <input v-model="item.data"/>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <button class="btn btn-next" v-on:click="nextButtonClicked">Next</button>
+            </div>
+        </div>
+        <div class="col preview">
+            <h1>Preview your resume!</h1>
+            {% include 'resume/includes/preview.html' %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://unpkg.com/vue"></script>
+    <script src="{% static 'js/vues.js' %}"></script>
+{% endblock %}

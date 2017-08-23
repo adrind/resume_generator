@@ -28,10 +28,6 @@
     text-align: right;
 }
 
-.start {
-    width: 100%;
-}
-
 .contact-text,
 .language {
     margin-top: 50px;
@@ -62,6 +58,25 @@ p {
 
 .h2-heading {
     color: #071C49;
+    width: 100%;
+}
+
+.hidden {
+    display: none;
+}
+
+.btn.btn-next {
+    background-color: #071C49;
+    color: #FFCC33;
+    width: 150px;
+    font-size: 20px;
+    margin-bottom:25px;
+}
+
+.btn-next:hover {
+    background-color: #FFCC33;
+    color: #071C49;
+    cursor: pointer;
 }
 
 .btn.btn-answer,
@@ -98,15 +113,10 @@ p {
     cursor: default;
 }
 
-.correct-answer.btn-answer:disabled,
-.correct-answer.btn-answer {
-    background-color: #FFCC33;
-    color: #071C49;
-    cursor: default;
-}
-
-.suggestion-box a {
-    display: inline-block;
+.preview {
+    border: 1px solid #071C49;
+    padding: 20px;
+    font-size: 16px;
 }
 
 @media (max-width: 500px) {

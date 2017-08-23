@@ -76,6 +76,9 @@ def create_skills(canvas, height):
 def home(request):
     return render(request, "resume/home_page.html")
 
+def guide(request):
+    return render(request, "resume/resume.html")
+
 def index(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
