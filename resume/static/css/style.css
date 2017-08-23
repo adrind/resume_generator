@@ -1,0 +1,116 @@
+.container {
+    color: #071C49;
+    font-size: 24px;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.header {
+    height: 100px;
+    background-color: #071C49;
+}
+
+.header-title {
+    height: 100px;
+    line-height: 85px;
+    margin-left: 25px;
+    padding-top: 15px;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.header-title a,
+.header-title a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+/* div for google translate */
+.translator {
+    text-align: right;
+}
+
+.start {
+    width: 100%;
+}
+
+.contact-text,
+.language {
+    margin-top: 50px;
+}
+
+.icon,
+.text-icon {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.btn-start {
+    width: 400px;
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.suggestion-text,
+.suggestion-btns,
+.language-text {
+    width: 100%;
+}
+
+p {
+    width: 100%;
+    color: #071C49;
+}
+
+.h2-heading {
+    color: #071C49;
+}
+
+.btn.btn-answer,
+.btn-start {
+    background-color: #071C49;
+    color: #FFCC33;
+    width: 450px;
+    margin-bottom:25px;
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
+.btn-answer:hover,
+.btn-bottom,
+.btn-start:hover {
+    background-color: #FFCC33;
+    color: #071C49;
+    cursor: pointer;
+}
+
+.btn-bottom:hover {
+    background-color: #071C49;
+    color: #FFCC33;
+    cursor: pointer;
+}
+
+.btn-answer:disabled,
+.btn-answer:hover:disabled {
+    background-color: #071C49;
+    color: #FFCC33;
+    cursor: default;
+}
+
+.correct-answer.btn-answer:disabled,
+.correct-answer.btn-answer {
+    background-color: #FFCC33;
+    color: #071C49;
+    cursor: default;
+}
+
+.suggestion-box a {
+    display: inline-block;
+}
+
+@media (max-width: 500px) {
+    .btn-answer {
+        width: 350px !important;
+    }
+}
