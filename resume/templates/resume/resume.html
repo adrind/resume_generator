@@ -6,23 +6,36 @@
     <div class="row" id="resume-preview">
         <div class="col">
             <div class="row" v-for="item in resume">
-                <div class="input" v-bind:class="{hidden: !item.isActive}">
+                <div class="input" v-if="item.isActive">
                     <h2 class="h2-heading"><strong>[item.message]</strong></h2>
-                    <input v-model="item.data"/>
+                    <div v-if="item.list">
+                        <skill v-for="skill in item.list.values" :value="skill" :isEditing="false"></skill>
+                        <input v-model="newListItem"/>
+                        <button v-if="item.list" class="btn btn-answer" v-on:click="addToList">Add</button>
+                    </div>
+                    <template v-else>
+                        <textarea v-if="item.isTextArea" v-model="item.data"></textarea>
+                        <input v-else v-model="item.data"/>
+                    </template>
                 </div>
             </div>
             <div class="row mt-4">
+                <button class="btn btn-next mr-2" v-on:click="backButtonClicked" v-if="activeIndex != 0">Back</button>
                 <button class="btn btn-next" v-on:click="nextButtonClicked">Next</button>
+                <button class="btn btn-next" v-if="done">Print!</button>
             </div>
         </div>
         <div class="col preview">
             <h1>Preview your resume!</h1>
+            <div class="preview-page">
             {% include 'resume/includes/preview.html' %}
+            </div>
         </div>
     </div>
 {% endblock %}
 
 {% block extra_js %}
     <script src="https://unpkg.com/vue"></script>
+    <script src="{% static 'js/underscore.js' %}"></script>
     <script src="{% static 'js/vues.js' %}"></script>
 {% endblock %}

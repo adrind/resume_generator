@@ -1,1 +1,1 @@
-<resume-field v-for="item in resume" :data="item.data" :key="item.id" v-bind:class="item.id"></resume-field>
+<resume-field v-for="item in resume" :list="item.list" :data="item.data" :key="item.id" :header="item.header" v-bind:class="[item.id, {hasHeader: item.header}, {hasList: item.list}]" class="resume-field"></resume-field>
