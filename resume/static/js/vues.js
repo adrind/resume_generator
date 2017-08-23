@@ -1,6 +1,6 @@
 Vue.component('resume-field', {
   props: ['data', 'id'],
-  template: '<div :class="id">{{data}}</div>'
+  template: '<div>{{data}}</div>'
 });
 
 

@@ -5,7 +5,7 @@
 {% block content %}
     <div class="row" id="resume-preview">
         <div class="col">
-            <div class="row mt-4" v-for="item in resume">
+            <div class="row" v-for="item in resume">
                 <div class="input" v-bind:class="{hidden: !item.isActive}">
                     <h2 class="h2-heading"><strong>[item.message]</strong></h2>
                     <input v-model="item.data"/>
