@@ -3,7 +3,7 @@ Vue.component('resume-field', {
   template: '<div>' +
             '<h3 v-if="header">{{header}}</h3>' +
             '<resume-list v-if="list" :values="list.values"></resume-list>' +
-            '<span class="data">{{data}}</span>' +
+            '<div class="data">{{data}}</div>' +
             '</div>'
 });
 
