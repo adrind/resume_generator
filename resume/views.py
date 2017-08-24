@@ -2,13 +2,14 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ListStyle
 from reportlab.lib.units import inch, mm
-from reportlab.pdfgen import canvas
-from reportlab.platypus import Paragraph, ListFlowable
+from reportlab.pdfgen import canvas, textobject
+from reportlab.platypus import Paragraph, ListFlowable, ListItem
 
 styles = getSampleStyleSheet()
 style = styles["Normal"]
+list_style = styles["UnorderedList"]
 
 # Create your views here.
 WIDTH, HEIGHT = letter
@@ -17,12 +18,12 @@ LEFT_MARGIN = 100
 TOP_MARGIN = HEIGHT - 100
 
 LINE_HEIGHT = 20
+SPACER = 20
 
-TOP_TABLE_MARGIN = HEIGHT - 300
+TOP_TABLE_MARGIN = HEIGHT - 200
 
-FIRST_COL_WIDTH = WIDTH/5
-SECOND_COL_WIDTH = WIDTH * 4/5
-
+FIRST_COL_WIDTH = (WIDTH - LEFT_MARGIN)/5
+SECOND_COL_WIDTH = (WIDTH - LEFT_MARGIN) * 4/5
 SECOND_COL_START = FIRST_COL_WIDTH + LEFT_MARGIN
 
 
@@ -45,33 +46,56 @@ def create_header(canvas):
     header.wrap(300, 300)
     header.drawOn(canvas, LEFT_MARGIN, TOP_MARGIN)
 
-def create_text_header(canvas):
+def create_text_header(canvas, data):
     canvas.setFont('Times-Bold', 16)
-    canvas.drawString(LEFT_MARGIN, TOP_MARGIN, "Adrienne Dreyfus")
+    canvas.drawString(LEFT_MARGIN, TOP_MARGIN, data['name'])
     canvas.setFont('Times-Roman', 16)
-    canvas.drawString(LEFT_MARGIN, TOP_MARGIN - LINE_HEIGHT, "3099 Washington st APT 20")
-    canvas.drawString(LEFT_MARGIN, TOP_MARGIN - LINE_HEIGHT*2, "San Francisco, CA 94115")
+    canvas.drawString(LEFT_MARGIN, TOP_MARGIN - LINE_HEIGHT, data['address'])
+    canvas.drawString(LEFT_MARGIN, TOP_MARGIN - LINE_HEIGHT*2, data['city'])
 
-def create_objective(canvas):
-    canvas.drawString(LEFT_MARGIN, TOP_TABLE_MARGIN, "Objective")
-    objective = Paragraph('''<para align=left spaceb=3>
-                              <font name=Times-Roman size=16>
-                              To learn on the job and be a good human
-                              </font></para>''', style=style)
-    w, h = objective.wrapOn(canvas, SECOND_COL_WIDTH, LINE_HEIGHT)
+def create_objective(canvas, objective):
+    return create_resume_field(canvas, 0, "Objective", objective)
 
-    objective.drawOn(canvas, SECOND_COL_START, TOP_TABLE_MARGIN)
-    return h
+def create_resume_field(canvas, starting_height, header_text, body_paragraph):
+    header = Paragraph(header_text, style=style)
+    objective = body_paragraph
 
+    w1, h1 = header.wrap(FIRST_COL_WIDTH, 100)
+    w2, h2 = objective.wrap(SECOND_COL_WIDTH, 100)
 
-def create_skills(canvas, height):
-    canvas.drawString(LEFT_MARGIN, TOP_TABLE_MARGIN - height * 3, "Skills")
-    skills = ListFlowable([Paragraph("Eating", style=style), Paragraph("Sleeping", style=style)], bulletType='bullet')
+    header.drawOn(canvas, LEFT_MARGIN, TOP_TABLE_MARGIN - h1 - starting_height)
+    objective.drawOn(canvas, SECOND_COL_START, TOP_TABLE_MARGIN - h2 - starting_height)
 
-    w, h = skills.wrapOn(canvas, SECOND_COL_WIDTH, LINE_HEIGHT * 4)
-    skills.drawOn(canvas, SECOND_COL_START, TOP_TABLE_MARGIN - height * 3)
+    return h1 if h1 > h2 else h2
 
-    return h
+def create_list_resume_field(canvas, starting_height, header_text, list_data):
+    header = Paragraph(header_text, style=style)
+
+    bullet_list = []
+    for skill in list_data:
+        bullet_list.append(Paragraph(skill, style=style))
+    list = ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
+        bulletFontSize=16, style=list_style)
+
+    w1, h1 = header.wrapOn(canvas, FIRST_COL_WIDTH, 100)
+    w2, h2 = list.wrapOn(canvas, SECOND_COL_WIDTH, LINE_HEIGHT * len(list_data))
+    header.drawOn(canvas, LEFT_MARGIN, TOP_TABLE_MARGIN - h1 - starting_height - SPACER)
+    list.drawOn(canvas, SECOND_COL_START, TOP_TABLE_MARGIN - h2 - starting_height - SPACER)
+
+    return h1 if h1 > h2 else h2
+
+def create_resume_section(header, dates, body):
+    return Paragraph('''<font color="red">{header}</font><br/>
+    <font color="blue">{dates}</font><br/>
+    {body}
+    '''.format(header=header, dates=dates, body=body), style=style)
+
+def create_skills(canvas, height, skill_arr):
+    return create_list_resume_field(canvas, height, "Skills", skill_arr)
+
+def create_education(canvas, height):
+    return create_resume_field(canvas, height, "Education", create_resume_section("Tufts", "2009-2013", "I went here!"))
+
 
 def home(request):
     return render(request, "resume/home_page.html")
@@ -79,7 +103,8 @@ def home(request):
 def guide(request):
     return render(request, "resume/resume.html")
 
-def index(request):
+def get_resume(request):
+    data = request.GET
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
 
@@ -88,12 +113,10 @@ def index(request):
 
     p.setFont('Times-Roman', 16)
 
-    create_text_header(p)
-    height = create_objective(p)
-    create_skills(p, height)
-
-    data = [["Objective", "To gain employment"], ["Skills", "Eating, Cooking, Eating"], ["Education", "My kitchen"]]
-
+    create_text_header(p, data)
+    h1 = create_objective(p, Paragraph(data['objective'], style=style))
+    h2 = create_skills(p, h1, data['skills'].split(','))
+    h3 = create_education(p, h2 + h1 + SPACER * 2)
 
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.

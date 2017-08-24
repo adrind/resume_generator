@@ -5,8 +5,9 @@
 {% block content %}
     <div class="row" id="resume-preview">
         <div class="col">
+            <button class="btn-answer btn" v-on:click="printResume">Print</button>
             <div class="row" v-for="item in resume">
-                <div class="input" v-if="item.isActive">
+                <div class="section" v-if="item.isActive">
                     <h2 class="h2-heading"><strong>[item.message]</strong></h2>
                     <div v-if="item.list">
                         <skill v-for="skill in item.list.values" :value="skill" :isEditing="false"></skill>

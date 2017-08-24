@@ -85,6 +85,19 @@ var app = new Vue({
 
             activeFrame.list.values.push(this.newListItem);
             this.newListItem = ''
+        },
+        printResume: function (event) {
+            var requestData = '';
+            this.resume.forEach(function(field){
+                if(field.list) {
+                    var listData = field.list.values.join(',');
+                    requestData = requestData + '&'+ field.id + '=' + listData;
+                } else {
+                    requestData = requestData + '&'+ field.id + '=' + field.data;
+                }
+            });
+
+            window.open('/resume/print?'+requestData);
         }
     }
 });

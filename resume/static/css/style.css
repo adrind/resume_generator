@@ -113,6 +113,12 @@ p {
     cursor: default;
 }
 
+.section,
+.section input,
+.section textarea {
+    width: 80%;
+}
+
 .preview-page {
     border: 1px solid #071C49;
     padding: 20px;
@@ -130,12 +136,16 @@ p {
     position: relative;
 }
 
+.resume-field.hasHeader .data {
+    margin-left: 30%;
+    width: 70%;
+}
+
 .resume-field h3 {
     font-weight: bold;
     color: #071C49;
     font-size: 16px;
-    display: inline-block;
-    width: 40%;
+    position: absolute;
 }
 
 .resume-field h4 {
