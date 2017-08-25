@@ -5,14 +5,13 @@
 {% block content %}
     <div class="row" id="resume-preview">
         <div class="col">
-            <button class="btn-answer btn" v-on:click="printResume">Print</button>
             <div class="row" v-for="item in resume">
                 <div class="section" v-if="item.isActive">
                     <h2 class="h2-heading"><strong>[item.message]</strong></h2>
                     <div v-if="item.list">
                         <skill v-for="skill in item.list.values" :value="skill" :isEditing="false"></skill>
                         <input v-model="newListItem"/>
-                        <button v-if="item.list" class="btn btn-answer" v-on:click="addToList">Add</button>
+                        <button v-if="item.list" class="btn btn-base" v-on:click="addToList">Add</button>
                     </div>
                     <template v-else>
                         <textarea v-if="item.isTextArea" v-model="item.data"></textarea>
@@ -21,13 +20,16 @@
                 </div>
             </div>
             <div class="row mt-4">
-                <button class="btn btn-next mr-2" v-on:click="backButtonClicked" v-if="activeIndex != 0">Back</button>
-                <button class="btn btn-next" v-on:click="nextButtonClicked">Next</button>
-                <button class="btn btn-next" v-if="done">Print!</button>
+                <div class="btn-section">
+                <button class="btn btn-base mr-2" v-on:click="backButtonClicked" v-if="activeIndex != 0">Back</button>
+                <button class="btn btn-base float-right" v-on:click="nextButtonClicked">Next</button>
+                </div>
             </div>
         </div>
         <div class="col preview">
-            <h1>Preview your resume!</h1>
+            <div class="print-btn">
+                <button class="btn btn-base float-right" v-on:click="printResume">Print your resume </button>
+            </div>
             <div class="preview-page">
             {% include 'resume/includes/preview.html' %}
             </div>

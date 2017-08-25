@@ -57,7 +57,9 @@ def create_objective(canvas, objective):
     return create_resume_field(canvas, 0, "Objective", objective)
 
 def create_resume_field(canvas, starting_height, header_text, body_paragraph):
+    canvas.setFont('Times-Bold', 16)
     header = Paragraph(header_text, style=style)
+    canvas.setFont('Times-Roman', 16)
     objective = body_paragraph
 
     w1, h1 = header.wrap(FIRST_COL_WIDTH, 100)

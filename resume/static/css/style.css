@@ -58,32 +58,15 @@ p {
 
 .h2-heading {
     color: #071C49;
-    width: 100%;
 }
 
 .hidden {
     display: none;
 }
 
-.btn.btn-next {
+.btn.btn-base {
     background-color: #071C49;
     color: #FFCC33;
-    width: 150px;
-    font-size: 20px;
-    margin-bottom:25px;
-}
-
-.btn-next:hover {
-    background-color: #FFCC33;
-    color: #071C49;
-    cursor: pointer;
-}
-
-.btn.btn-answer,
-.btn-start {
-    background-color: #071C49;
-    color: #FFCC33;
-    width: 450px;
     margin-bottom:25px;
     white-space: pre-wrap; /* css-3 */
     white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
@@ -92,31 +75,39 @@ p {
     word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
 
-.btn-answer:hover,
-.btn-bottom,
-.btn-start:hover {
+.btn-base:hover {
     background-color: #FFCC33;
     color: #071C49;
     cursor: pointer;
 }
 
-.btn-bottom:hover {
-    background-color: #071C49;
-    color: #FFCC33;
-    cursor: pointer;
-}
 
-.btn-answer:disabled,
-.btn-answer:hover:disabled {
+.btn-base:disabled,
+.btn-base:hover:disabled {
     background-color: #071C49;
     color: #FFCC33;
     cursor: default;
 }
 
-.section,
+#resume-preview .btn-link,
+#resume-preview .btn-link:focus,
+#resume-preview .btn-link:hover {
+    height: 25px;
+    color: #071C49;
+}
+
+.section {
+    width: 100%;
+}
+
 .section input,
-.section textarea {
+.section textarea,
+.btn-section {
     width: 80%;
+}
+
+.print-btn {
+    height: 50px;
 }
 
 .preview-page {
