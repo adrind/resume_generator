@@ -17,7 +17,7 @@ Vue.component('rich-list-preview', {
         '<div v-for="item in list" class="rich-list-preview">' +
         '<h4 v-if="item.header">{{item.header}}</h4>' +
         '<h5 v-if="item.dates">{{item.dates}}</h5>' +
-        '<ul v-if="item.values" id="example-1"><li v-for="data in item.values">{{ data }}</li></ul>' +
+        '<ul v-if="item.values" id="example-1"><li v-for="data in item.values">{{ data.value }}</li></ul>' +
         '</div>'+
         '</div>'
 });
@@ -31,12 +31,25 @@ Vue.component('simple-list-item', {
 });
 
 Vue.component('rich-list-item', {
-    props: ['value', 'isEditing'],
+    props: ['value'],
     delimiters: ["[", "]"],
     template: '#rich-list-item',
+    data: function () {
+        return {
+            isEditing: false,
+            newListItem: ''
+        }
+    },
     methods: {
-        edit: function () {
-
+        edit: function (evt) {
+            this.isEditing = true;
+        },
+        save: function (evt) {
+            this.isEditing = false;
+        },
+        add: function (evt) {
+            this.value.values.push({value: this.newListItem});
+            this.newListItem = '';
         }
     }
 });
@@ -61,6 +74,7 @@ var createRichList = function (id, header, opts) {
         header: opts.header || '',
         isActive: opts.isActive || false,
         list: opts.list || null,
+        listKeys: opts.listKeys || null,
         label: opts.label || '',
         isRichList: true,
         previewHeader: opts.header || ''
@@ -90,11 +104,12 @@ var app = new Vue({
             createResumeField('city', 'San Francisco, CA', 'What is your city?'),
             createResumeField('objective', 'To get better at work', "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
             createSimpleList('skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: ['Cooking', 'Cleaning'], isSimpleList: true}}),
-            createRichList('education', "What education do you have?", {label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:['Graduated with degree', 'Had fun']}]}})
+            createRichList('education', "What education do you have?", {listKeys: [{value: 'School name'}, {value: 'Years attended'}, {value:'Things you did'}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}})
         ],
         done: false,
         activeIndex: 0,
-        newListItem: ''
+        newListItem: '',
+        newRichListItem: {}
     },
     methods: {
         nextButtonClicked: function (event) {

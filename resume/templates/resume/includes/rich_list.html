@@ -1,5 +1,6 @@
 <rich-list-item v-for="data in item.list.values" :value="data" :isEditing="false"></rich-list-item>
 <div class="new-list-item">
+
     <input v-model="newListItem" @keyup.enter="addToList"/>
     <button v-if="item.list" class="btn btn-base" v-on:click="addToList">Add</button>
 </div>
