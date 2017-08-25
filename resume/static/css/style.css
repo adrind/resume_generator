@@ -148,6 +148,11 @@ p {
     display: inline-block;
 }
 
+.resume-field h5 {
+    color: #934725;
+    font-size: 14px;
+}
+
 .resume-field.hasList h3 {
     position: absolute;
 }
@@ -160,6 +165,8 @@ p {
 .resume-list ul {
     padding-left: 15px;
 }
+
+/* Rich List */
 
 .rich-list-item {
     border: 1px solid #071C49;

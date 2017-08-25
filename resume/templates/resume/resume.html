@@ -1,4 +1,3 @@
-
 {% extends "./base.html" %}
 {% load static %}
 
@@ -32,11 +31,12 @@
                 <button class="btn btn-base float-right" v-on:click="printResume"><i class="fa fa-print" aria-hidden="true"></i> Print your resume </button>
             </div>
             <div class="preview-page">
-            {% include 'resume/includes/preview.html' %}
+                <preview-field v-for="item in resume" :item="item" :list="item.list" :data="item.data" :key="item.id" :header="item.previewHeader" v-bind:class="[item.id, {hasHeader: item.previewHeader}, {hasList: item.list}]" class="resume-field"></preview-field>
             </div>
         </div>
     </div>
     {% include 'resume/includes/rich_list_item.html' %}
+    {% include 'resume/includes/preview.html' %}
 {% endblock %}
 
 {% block extra_js %}

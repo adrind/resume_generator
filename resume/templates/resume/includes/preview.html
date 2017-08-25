@@ -1,1 +1,8 @@
-<preview-field v-for="item in resume" :item="item" :list="item.list" :data="item.data" :key="item.id" :header="item.previewHeader" v-bind:class="[item.id, {hasHeader: item.previewHeader}, {hasList: item.list}]" class="resume-field"></preview-field>
+<script type="text/x-template" id="preview-item">
+    <div class="preview-item">
+        <h3 v-if="header">[header]</h3>
+        <div v-if="item.data" class="data">[item.data]</div>
+        <simple-list-preview v-if="item.isSimpleList && item.list" :list="item.list.values"></simple-list-preview>
+        <rich-list-preview v-if="item.isRichList && item.list" :list="item.list.values"></rich-list-preview>
+    </div>
+</script>
