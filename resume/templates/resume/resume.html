@@ -7,34 +7,36 @@
         <div class="col">
             <div class="row" v-for="item in resume">
                 <div class="section" v-if="item.isActive">
-                    <h2 class="h2-heading"><strong>[item.message]</strong></h2>
-                    <div v-if="item.list">
-                        <skill v-for="skill in item.list.values" :value="skill" :isEditing="false"></skill>
-                        <input v-model="newListItem"/>
-                        <button v-if="item.list" class="btn btn-base" v-on:click="addToList">Add</button>
+                    <h2 class="h2-heading"><strong>[item.header]</strong></h2>
+                    <div v-if="item.isSimpleList">
+                        {% include 'resume/includes/simple_list.html' %}
                     </div>
-                    <template v-else>
+                    <div v-if="item.isRichList">
+                        {% include 'resume/includes/rich_list.html' %}
+                    </div>
+                    <div v-if="item.isField">
                         <textarea v-if="item.isTextArea" v-model="item.data"></textarea>
                         <input v-else v-model="item.data"/>
-                    </template>
+                    </div>
                 </div>
             </div>
             <div class="row mt-4">
                 <div class="btn-section">
-                <button class="btn btn-base mr-2" v-on:click="backButtonClicked" v-if="activeIndex != 0">Back</button>
-                <button class="btn btn-base float-right" v-on:click="nextButtonClicked">Next</button>
+                <button class="btn btn-base btn-base-lg mr-2" v-on:click="backButtonClicked" v-if="activeIndex != 0"><i class="fa fa-angle-left mr-2" aria-hidden="true"></i> Back</button>
+                <button class="btn btn-base btn-base-lg float-right" v-on:click="nextButtonClicked">Next <i class="fa fa-angle-right ml-2" aria-hidden="true"></i></button>
                 </div>
             </div>
         </div>
         <div class="col preview">
             <div class="print-btn">
-                <button class="btn btn-base float-right" v-on:click="printResume">Print your resume </button>
+                <button class="btn btn-base float-right" v-on:click="printResume"><i class="fa fa-print" aria-hidden="true"></i> Print your resume </button>
             </div>
             <div class="preview-page">
             {% include 'resume/includes/preview.html' %}
             </div>
         </div>
     </div>
+    {% include 'resume/includes/rich_list_item.html' %}
 {% endblock %}
 
 {% block extra_js %}

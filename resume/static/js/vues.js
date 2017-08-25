@@ -1,22 +1,33 @@
-Vue.component('resume-field', {
+Vue.component('preview-field', {
   props: ['data', 'id', 'header', 'list'],
   template: '<div>' +
             '<h3 v-if="header">{{header}}</h3>' +
-            '<resume-list v-if="list" :values="list.values"></resume-list>' +
+            '<resume-list v-if="list" :list="list.values"></resume-list>' +
             '<div class="data">{{data}}</div>' +
             '</div>'
 });
 
+Vue.component('preview-rich-field', {
+  props: ['item'],
+  template: '<div>' +
+            '<h3 v-if="item.header">{{item.header}}</h3>' +
+            '<h5 v-if="item.dates">{{item.dates}}</h5>' +
+            '<resume-list v-if="item.list" :list="list.values"></resume-list>' +
+            '<div class="item.data">{{data}}</div>' +
+            '</div>'
+});
+
+
 Vue.component('resume-list', {
-    props: ['values', 'header', 'dates'],
+    props: ['list'],
     template: '<div class="resume-list">' +
-        '<h4 v-if="header">{{header}}</h4>' +
-        '<h5 v-if="dates">{{dates}}</h5>' +
-        '<ul id="example-1"><li v-for="item in values">{{ item }}</li></ul>' +
+        '<h4 v-if="list.header">{{list.header}}</h4>' +
+        '<h5 v-if="list.dates">{{list.dates}}</h5>' +
+        '<ul id="example-1"><li v-for="item in list">{{ item }}</li></ul>' +
         '</div>'
 });
 
-Vue.component('skill', {
+Vue.component('simple-list-item', {
     props: ['value', 'header', 'isEditing'],
     template: '<div class="skill">' +
               '{{value}}' +
@@ -24,17 +35,53 @@ Vue.component('skill', {
               '</div>'
 });
 
-var createResumeField = function (id, data, message, opts) {
+Vue.component('rich-list-item', {
+    props: ['value', 'isEditing'],
+    delimiters: ["[", "]"],
+    template: '#rich-list-item',
+    methods: {
+        edit: function () {
+
+        }
+    }
+});
+
+var createSimpleList = function (id, header, opts) {
+    if(!opts) opts = {};
+    return {
+        id: id,
+        header: opts.header || '',
+        isActive: opts.isActive || false,
+        list: opts.list || null,
+        label: opts.label || '',
+        isSimpleList: true,
+        previewHeader: opts.header || ''
+    }
+};
+
+var createRichList = function (id, header, opts) {
+    if(!opts) opts = {};
+    return {
+        id: id,
+        header: opts.header || '',
+        isActive: opts.isActive || false,
+        list: opts.list || null,
+        label: opts.label || '',
+        isRichList: true,
+        previewHeader: opts.header || ''
+    }
+};
+
+var createResumeField = function (id, data, header, opts) {
     if(!opts) opts = {};
     return {
         id: id,
         data: data,
-        message: message,
+        header: header,
         isActive: opts.isActive || false,
         isTextArea: opts.isTextArea || false,
-        header: opts.header || '',
-        list: opts.list || null,
-        label: opts.label || ''
+        previewHeader: opts.header || '',
+        isField: true
     }
 };
 
@@ -47,7 +94,8 @@ var app = new Vue({
             createResumeField('address', '3099 Washington st', 'What is your address?'),
             createResumeField('city', 'San Francisco, CA', 'What is your city?'),
             createResumeField('objective', 'To get better at work', "What's your goal? What do you want to learn on the job?", {isTextArea: true, header: 'Objective'}),
-            createResumeField('skills', '', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: ['Cooking', 'Cleaning']}})
+            createSimpleList('skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: ['Cooking', 'Cleaning'], isSimpleList: true}}),
+            createRichList('education', "What education do you have?", {label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:['Graduated with degree', 'Had fun']}]}})
         ],
         done: false,
         activeIndex: 0,
