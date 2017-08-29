@@ -22,6 +22,27 @@ Vue.component('rich-list-preview', {
         '</div>'
 });
 
+Vue.component('list', {
+    props: ['values'],
+    data: function () {
+        return {
+            newItem: '',
+            items: []
+        }
+    },
+    template: '<div class="list">' +
+    '<ul v-if="values" id="example-1"><li v-for="data in values">{{ data.value }}</li></ul>' +
+    '<input v-model="newItem"/><button class="btn btn-base" v-on:click="addToList">Add to list</button>' +
+    '</div>',
+    methods: {
+        addToList: function () {
+            this.items.push({value: this.newItem});
+            this.newItem = '';
+            this.$emit('update:values', this.items);
+        }
+    }
+});
+
 Vue.component('simple-list-item', {
     props: ['value', 'header', 'isEditing'],
     template: '<div class="skill">' +
@@ -74,7 +95,7 @@ var createRichList = function (id, header, opts) {
         header: opts.header || '',
         isActive: opts.isActive || false,
         list: opts.list || null,
-        listKeys: opts.listKeys || null,
+        listFields: opts.listFields || null,
         label: opts.label || '',
         isRichList: true,
         previewHeader: opts.header || ''
@@ -104,7 +125,7 @@ var app = new Vue({
             createResumeField('city', 'San Francisco, CA', 'What is your city?'),
             createResumeField('objective', 'To get better at work', "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
             createSimpleList('skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: ['Cooking', 'Cleaning'], isSimpleList: true}}),
-            createRichList('education', "What education do you have?", {listKeys: [{value: 'School name'}, {value: 'Years attended'}, {value:'Things you did'}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}})
+            createRichList('education', "What education do you have?", {listFields: [{key: 'header', value: 'School name'}, {key:'dates', value: 'Years attended'}, {key:'values',value:'Things you did', isList: true}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}})
         ],
         done: false,
         activeIndex: 0,
@@ -144,6 +165,11 @@ var app = new Vue({
             activeFrame.list.values.push(this.newListItem);
             this.newListItem = ''
         },
+        addToRichList: function (event) {
+            var activeFrame = this.resume[this.activeIndex];
+            activeFrame.list.values.push(this.newRichListItem);
+            this.newRichListItem = {};
+        },
         printResume: function (event) {
             var requestData = '';
             this.resume.forEach(function(field){
@@ -154,7 +180,6 @@ var app = new Vue({
                     requestData = requestData + '&'+ field.id + '=' + field.data;
                 }
             });
-
             window.open('/resume/print?'+requestData);
         }
     }
