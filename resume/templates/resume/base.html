@@ -43,7 +43,7 @@
             </h1>
         </header>
 
-        <div class="container mt-4">
+        <div class="container mt-4" data-token="{{ csrf_token }}">
             {% if page.url != '/' %}
                 <div class="translator mb-4">
                     <div id="google_translate_element" class="mt-2"></div>

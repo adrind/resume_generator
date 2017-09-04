@@ -3,9 +3,12 @@ from django.http import HttpResponse
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ListStyle
-from reportlab.lib.units import inch, mm
-from reportlab.pdfgen import canvas, textobject
-from reportlab.platypus import Paragraph, ListFlowable, ListItem
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Paragraph, ListFlowable
+from tempfile import NamedTemporaryFile
+from django.http import JsonResponse
+import os
+import json
 
 styles = getSampleStyleSheet()
 style = styles["Normal"]
@@ -14,11 +17,12 @@ list_style = styles["UnorderedList"]
 # Create your views here.
 WIDTH, HEIGHT = letter
 
-LEFT_MARGIN = 100
 TOP_MARGIN = HEIGHT - 100
+LEFT_MARGIN = 100
 
 LINE_HEIGHT = 20
 SPACER = 20
+MAX_HEIGHT = 100
 
 TOP_TABLE_MARGIN = HEIGHT - 200
 
@@ -27,48 +31,26 @@ SECOND_COL_WIDTH = (WIDTH - LEFT_MARGIN) * 4/5
 SECOND_COL_START = FIRST_COL_WIDTH + LEFT_MARGIN
 
 
-def create_header(canvas):
-    header_info = {
-        'name': "Adrienne Dreyfus",
-        'address': "3099 Washington st APT 20",
-        'city': "San Francisco, CA 94115",
-        'fontName': "Helvetica",
-        'size': 14,
-        'textColor': colors.slategray}
+def create_header_field(canvas, starting_height, body):
+    field = Paragraph(body, style=style)
+    w1, h1 = field.wrap(WIDTH, MAX_HEIGHT)
+    field.drawOn(canvas, LEFT_MARGIN, starting_height)
 
-    header = Paragraph('''<para align=left spaceb=3>
-                              <font name=%(fontName)s size=%(size)s color=%(textColor)s>
-                              %(name)s<br/>
-                              %(address)s<br/>
-                              %(city)s<br/>
-                              </font></para>''' % header_info, style=style, bulletText=None)
+    return starting_height - h1
 
-    header.wrap(300, 300)
-    header.drawOn(canvas, LEFT_MARGIN, TOP_MARGIN)
-
-def create_text_header(canvas, data):
-    canvas.setFont('Times-Bold', 16)
-    canvas.drawString(LEFT_MARGIN, TOP_MARGIN, data['name'])
-    canvas.setFont('Times-Roman', 16)
-    canvas.drawString(LEFT_MARGIN, TOP_MARGIN - LINE_HEIGHT, data['address'])
-    canvas.drawString(LEFT_MARGIN, TOP_MARGIN - LINE_HEIGHT*2, data['city'])
-
-def create_objective(canvas, objective):
-    return create_resume_field(canvas, 0, "Objective", objective)
 
 def create_resume_field(canvas, starting_height, header_text, body_paragraph):
-    canvas.setFont('Times-Bold', 16)
     header = Paragraph(header_text, style=style)
-    canvas.setFont('Times-Roman', 16)
-    objective = body_paragraph
+    objective = Paragraph(body_paragraph, style=style)
 
-    w1, h1 = header.wrap(FIRST_COL_WIDTH, 100)
-    w2, h2 = objective.wrap(SECOND_COL_WIDTH, 100)
+    w1, h1 = header.wrap(FIRST_COL_WIDTH, MAX_HEIGHT)
+    w2, h2 = objective.wrap(SECOND_COL_WIDTH, MAX_HEIGHT)
 
-    header.drawOn(canvas, LEFT_MARGIN, TOP_TABLE_MARGIN - h1 - starting_height)
-    objective.drawOn(canvas, SECOND_COL_START, TOP_TABLE_MARGIN - h2 - starting_height)
+    header.drawOn(canvas, LEFT_MARGIN, starting_height)
+    objective.drawOn(canvas, SECOND_COL_START, starting_height)
 
-    return h1 if h1 > h2 else h2
+    return starting_height - h1 if h1 > h2 else starting_height - h2
+
 
 def create_list_resume_field(canvas, starting_height, header_text, list_data):
     header = Paragraph(header_text, style=style)
@@ -76,28 +58,47 @@ def create_list_resume_field(canvas, starting_height, header_text, list_data):
     bullet_list = []
     for skill in list_data:
         bullet_list.append(Paragraph(skill, style=style))
-    list = ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
+    list_flow = ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
         bulletFontSize=16, style=list_style)
 
-    w1, h1 = header.wrapOn(canvas, FIRST_COL_WIDTH, 100)
-    w2, h2 = list.wrapOn(canvas, SECOND_COL_WIDTH, LINE_HEIGHT * len(list_data))
-    header.drawOn(canvas, LEFT_MARGIN, TOP_TABLE_MARGIN - h1 - starting_height - SPACER)
-    list.drawOn(canvas, SECOND_COL_START, TOP_TABLE_MARGIN - h2 - starting_height - SPACER)
+    w1, h1 = header.wrapOn(canvas, FIRST_COL_WIDTH, MAX_HEIGHT)
+    w2, h2 = list_flow.wrapOn(canvas, SECOND_COL_WIDTH, LINE_HEIGHT * len(list_data))
+    header.drawOn(canvas, LEFT_MARGIN, starting_height - h1)
+    list_flow.drawOn(canvas, SECOND_COL_START, starting_height - h2)
 
-    return h1 if h1 > h2 else h2
+    return starting_height - h1 if h1 > h2 else starting_height - h2
 
-def create_resume_section(header, dates, body):
-    return Paragraph('''<font color="red">{header}</font><br/>
-    <font color="blue">{dates}</font><br/>
-    {body}
-    '''.format(header=header, dates=dates, body=body), style=style)
+def create_rich_list_section(section):
+    paragraphs = []
+    for field in section:
+        if field['type'] == 'field':
+            paragraphs.append(Paragraph(field['value'], style=style))
+        if field['type'] == 'list':
+            bullet_list = []
+            for skill in field['value']:
+                bullet_list.append(Paragraph(skill, style=style))
+            list_flow = ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
+                                     bulletFontSize=16, style=list_style)
 
-def create_skills(canvas, height, skill_arr):
-    return create_list_resume_field(canvas, height, "Skills", skill_arr)
+            paragraphs.append(list_flow)
+    return paragraphs
 
-def create_education(canvas, height):
-    return create_resume_field(canvas, height, "Education", create_resume_section("Tufts", "2009-2013", "I went here!"))
 
+def create_rich_list(canvas, starting_height, header_text, list_data):
+    header = Paragraph(header_text, style=style)
+
+    w1, h1 = header.wrapOn(canvas, FIRST_COL_WIDTH, MAX_HEIGHT)
+    header.drawOn(canvas, LEFT_MARGIN, starting_height - h1)
+
+    for item in list_data:
+        section = create_rich_list_section(item)
+        for paragraph in section:
+            w2, h2 = paragraph.wrapOn(canvas, FIRST_COL_WIDTH, MAX_HEIGHT)
+            paragraph.drawOn(canvas, SECOND_COL_START, starting_height - h2)
+
+            starting_height -= h2
+
+    return starting_height
 
 def home(request):
     return render(request, "resume/home_page.html")
@@ -105,26 +106,43 @@ def home(request):
 def guide(request):
     return render(request, "resume/resume.html")
 
+def download_resume(request):
+    fsock = open('/Users/adrienne/workspace/resume_generator/resume/tmp/tmprmypzh69', 'rb')
+    response = HttpResponse(fsock, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename=myfile.pdf'
+
+    return response
+
 def get_resume(request):
-    data = request.GET
+    data = json.loads(request.body)
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
 
     # Create the PDF object, using the response object as its "file."
     p = canvas.Canvas(response, pagesize=letter)
 
     p.setFont('Times-Roman', 16)
+    starting_height = TOP_MARGIN
 
-    create_text_header(p, data)
-    h1 = create_objective(p, Paragraph(data['objective'], style=style))
-    h2 = create_skills(p, h1, data['skills'].split(','))
-    h3 = create_education(p, h2 + h1 + SPACER * 2)
+    for field in data:
+        if field['type'] == 'header':
+            starting_height = create_header_field(p, starting_height, field['value'])
+        if field['type'] == 'field':
+            starting_height -= SPACER
+            starting_height = create_resume_field(p, starting_height, field['id'], field['value'])
+        if field['type'] == 'list':
+            starting_height -= SPACER
+            starting_height = create_list_resume_field(p, starting_height, field['id'], field['value'])
+        if field['type'] == 'rich-list':
+            starting_height -= SPACER
+            starting_height = create_rich_list(p, starting_height, field['id'], field['value'])
 
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
 
     # Close the PDF object cleanly, and we're done.
     p.showPage()
-    p.save()
+    with NamedTemporaryFile(dir=os.path.dirname(os.path.abspath(__file__))+'/tmp', delete=False) as tmp:
+        tmp.write(p.getpdfdata())
 
-    return response
+    p.save()
+    return JsonResponse({'fileName': tmp.name})

@@ -84,7 +84,15 @@ var createSimpleList = function (id, header, opts) {
         list: opts.list || null,
         label: opts.label || '',
         isSimpleList: true,
-        previewHeader: opts.header || ''
+        previewHeader: opts.header || '',
+
+        serialize: function () {
+            return {
+                id: this.id,
+                type: 'list',
+                value: this.list.values
+            };
+        }
     }
 };
 
@@ -98,9 +106,36 @@ var createRichList = function (id, header, opts) {
         listFields: opts.listFields || null,
         label: opts.label || '',
         isRichList: true,
-        previewHeader: opts.header || ''
+        previewHeader: opts.header || '',
+
+        serialize: function () {
+            return {
+                id: this.id,
+                type: 'rich-list',
+                value: this.list.values
+            }
+        }
     }
 };
+
+var createHeaderField = function (id, data, header, opts) {
+    if(!opts) opts = {};
+    return {
+        id: id,
+        data: data,
+        isActive: opts.isActive || false,
+        isField: true,
+
+        serialize: function () {
+            return {
+                id: this.id,
+                type: 'header',
+                value: this.data
+            };
+        }
+    }
+};
+
 
 var createResumeField = function (id, data, header, opts) {
     if(!opts) opts = {};
@@ -111,7 +146,15 @@ var createResumeField = function (id, data, header, opts) {
         isActive: opts.isActive || false,
         isTextArea: opts.isTextArea || false,
         previewHeader: opts.header || '',
-        isField: true
+        isField: true,
+        
+        serialize: function () {
+            return {
+                id: this.id,
+                type: 'field',
+                value: this.data
+            };
+        }
     }
 };
 
@@ -120,9 +163,9 @@ var app = new Vue({
     el: '#resume-preview',
     data: {
         resume: [
-            createResumeField('name', 'Adrienne Dreyfus', 'What is your name?', {isActive: true}),
-            createResumeField('address', '3099 Washington st', 'What is your address?'),
-            createResumeField('city', 'San Francisco, CA', 'What is your city?'),
+            createHeaderField('name', 'Adrienne Dreyfus', 'What is your name?', {isActive: true}),
+            createHeaderField('address', '3099 Washington st', 'What is your address?'),
+            createHeaderField('city', 'San Francisco, CA', 'What is your city?'),
             createResumeField('objective', 'To get better at work', "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
             createSimpleList('skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: ['Cooking', 'Cleaning'], isSimpleList: true}}),
             createRichList('education', "What education do you have?", {listFields: [{key: 'header', value: 'School name'}, {key:'dates', value: 'Years attended'}, {key:'values',value:'Things you did', isList: true}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}})
@@ -171,16 +214,36 @@ var app = new Vue({
             this.newRichListItem = {};
         },
         printResume: function (event) {
-            var requestData = '';
+            var requestData = [];
             this.resume.forEach(function(field){
-                if(field.list) {
-                    var listData = field.list.values.join(',');
-                    requestData = requestData + '&'+ field.id + '=' + listData;
-                } else {
-                    requestData = requestData + '&'+ field.id + '=' + field.data;
+                var serializedField = field.serialize();
+                requestData.push(serializedField);
+            });
+            var csrfmiddlewaretoken = $('.container').data('token');
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", csrfmiddlewaretoken);
+                    }
                 }
             });
-            window.open('/resume/print?'+requestData);
+
+            $.ajax({
+                cache: false,
+                url : "/resume/print",
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(requestData),
+                processData: false,
+                success : function(callback){
+
+                },
+                error : function(callback){
+
+                }
+            });
         }
     }
 });
