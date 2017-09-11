@@ -30,7 +30,7 @@
             <div class="print-btn">
                 <button class="btn btn-base float-right" v-on:click="printResume"><i class="fa fa-print" aria-hidden="true"></i> Print your resume </button>
             </div>
-            <div class="preview-page">
+            <div class="preview-page" id="resume-1">
                 <preview-field v-for="item in resume" :item="item" :list="item.list" :data="item.data" :key="item.id" :header="item.previewHeader" v-bind:class="[item.id, {hasHeader: item.previewHeader}, {hasList: item.list}]" class="resume-field"></preview-field>
             </div>
         </div>

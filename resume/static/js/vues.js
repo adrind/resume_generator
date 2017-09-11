@@ -15,8 +15,8 @@ Vue.component('rich-list-preview', {
     props: ['list'],
     template: '<div class="resume-list">' +
         '<div v-for="item in list" class="rich-list-preview">' +
-        '<h4 v-if="item.header">{{item.header}}</h4>' +
-        '<h5 v-if="item.dates">{{item.dates}}</h5>' +
+        '<h4 class="preview-rich-list-header" v-if="item.header">{{item.header}}</h4>' +
+        '<h5 class="preview-rich-list-header" v-if="item.dates">{{item.dates}}</h5>' +
         '<ul v-if="item.values" id="example-1"><li v-for="data in item.values">{{ data.value }}</li></ul>' +
         '</div>'+
         '</div>'
@@ -45,7 +45,7 @@ Vue.component('list', {
 });
 
 Vue.component('simple-list-item', {
-    props: ['value', 'header', 'isEditing'],
+    props: ['value', 'isEditing'],
     template: '<div class="skill">' +
               '{{value}}' +
               '<input v-model="value" v-if="isEditing">' +
@@ -126,6 +126,7 @@ var createHeaderField = function (id, data, header, opts) {
         data: data,
         isActive: opts.isActive || false,
         isField: true,
+        header: header,
 
         serialize: function () {
             return {
@@ -167,6 +168,7 @@ var app = new Vue({
             createHeaderField('name', 'Adrienne Dreyfus', 'What is your name?', {isActive: true}),
             createHeaderField('address', '3099 Washington st', 'What is your address?'),
             createHeaderField('city', 'San Francisco, CA', 'What is your city?'),
+            createHeaderField('email', 'adrienne@codeforamerica.org', 'What is your email address?'),
             createResumeField('Objective', 'To get better at work', "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
             createSimpleList('Skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: ['Cooking', 'Cleaning'], isSimpleList: true}}),
             createRichList('Education', "What education do you have?", {listFields: [{key: 'header', value: 'School name'}, {key:'dates', value: 'Years attended'}, {key:'values',value:'Things you did', isList: true}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}}),

@@ -9,6 +9,10 @@ from tempfile import NamedTemporaryFile
 from django.http import JsonResponse
 import os
 import json
+
+RESUME1_HEADER_COLOR = colors.Color(.75, .12, .12)
+RESUME1_FIELD_HEADER_COLOR = colors.Color(0, .5, .5)
+
 def create_stylesheet():
     global styles, style
 
@@ -23,14 +27,21 @@ def create_stylesheet():
 
     stylesheet.add(ParagraphStyle(name = 'Header',
                                   parent=stylesheet['Normal'],
-                                  fontSize = 18,
-                                  leading = 21))
+                                  fontSize = 16,
+                                  leading = 18))
 
     stylesheet.add(ParagraphStyle(name = 'Field-Header',
                                   parent=stylesheet['Normal'],
-                                  fontSize = 18,
-                                  leading = 21,
-                                  textColor = colors.Color(0.5, 0.08, 0.08)
+                                  fontSize = 16,
+                                  leading = 18,
+                                  textColor = RESUME1_FIELD_HEADER_COLOR
+                                  ))
+
+    stylesheet.add(ParagraphStyle(name = 'Rich-List-Header',
+                                  parent=stylesheet['Normal'],
+                                  fontSize = 16,
+                                  leading = 18,
+                                  fontName = 'Times-Bold'
                                   ))
 
     stylesheet.add(ListStyle(name='UnorderedList',
@@ -78,7 +89,7 @@ SECOND_COL_START = FIRST_COL_WIDTH + LEFT_MARGIN
 def create_header_field(canvas, starting_height, body):
     field = Paragraph(body, style=styles['Header'])
     w1, h1 = field.wrap(WIDTH, MAX_HEIGHT)
-    field.drawOn(canvas, LEFT_MARGIN, starting_height)
+    field.drawOn(canvas, LEFT_MARGIN, starting_height - h1)
 
     return starting_height - h1
 
@@ -115,9 +126,9 @@ def create_list_resume_field(canvas, starting_height, header_text, list_data):
 def create_rich_list_section(section):
     paragraphs = []
     if 'header' in section:
-        paragraphs.append(Paragraph(section['header'], style=style))
+        paragraphs.append(Paragraph(section['header'], style=styles['Rich-List-Header']))
     if 'dates' in section:
-        paragraphs.append(Paragraph(section['dates'], style=style))
+        paragraphs.append(Paragraph(section['dates'], style=styles['Rich-List-Header']))
     if 'values' in section:
         bullet_list = []
         for skill in section['values']:

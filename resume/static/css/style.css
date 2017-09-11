@@ -127,7 +127,6 @@ p {
 .preview-page {
     border: 1px solid #071C49;
     padding: 20px;
-    height: 500px;
     font-size: 16px;
     font-family: "Times New Roman";
 }
@@ -194,6 +193,14 @@ p {
 .new-list-item label {
     width: 100%;
 }
+
+#resume-1 .preview-header {
+    color: #003535;
+}
+
+#resume-1 .preview-rich-list-header {
+}
+
 
 
 @media (max-width: 500px) {

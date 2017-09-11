@@ -1,4 +1,4 @@
-<simple-list-item v-for="skill in item.list.values" :value="skill" :isEditing="false"></simple-list-item>
+<simple-list-item v-for="skill in item.list.values" :value="skill" :isEditing="false" :key="skill"></simple-list-item>
 <div class="new-list-item">
     <input v-model="newListItem" @keyup.enter="addToList"/>
     <button v-if="item.list" class="btn btn-base-alt" v-on:click="addToList">Add</button>
