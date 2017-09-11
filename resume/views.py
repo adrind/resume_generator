@@ -70,17 +70,21 @@ def create_list_resume_field(canvas, starting_height, header_text, list_data):
 
 def create_rich_list_section(section):
     paragraphs = []
-    for field in section:
-        if field['type'] == 'field':
-            paragraphs.append(Paragraph(field['value'], style=style))
-        if field['type'] == 'list':
-            bullet_list = []
-            for skill in field['value']:
-                bullet_list.append(Paragraph(skill, style=style))
-            list_flow = ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
-                                     bulletFontSize=16, style=list_style)
+    if 'header' in section:
+        paragraphs.append(Paragraph(section['header'], style=style))
+    if 'dates' in section:
+        paragraphs.append(Paragraph(section['dates'], style=style))
+    if 'values' in section:
+        bullet_list = []
+        for skill in section['values']:
+            bullet_list.append(Paragraph(skill['value'], style=style))
+        list_flow = ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
+                                 bulletFontSize=16, style=list_style)
+        paragraphs.append(list_flow)
 
-            paragraphs.append(list_flow)
+    if 'body' in section:
+        paragraphs.append(Paragraph(section['body'], style=style))
+
     return paragraphs
 
 
@@ -93,10 +97,11 @@ def create_rich_list(canvas, starting_height, header_text, list_data):
     for item in list_data:
         section = create_rich_list_section(item)
         for paragraph in section:
-            w2, h2 = paragraph.wrapOn(canvas, FIRST_COL_WIDTH, MAX_HEIGHT)
+            w2, h2 = paragraph.wrapOn(canvas, SECOND_COL_WIDTH, MAX_HEIGHT)
             paragraph.drawOn(canvas, SECOND_COL_START, starting_height - h2)
 
             starting_height -= h2
+        starting_height -= SPACER
 
     return starting_height
 
@@ -107,7 +112,8 @@ def guide(request):
     return render(request, "resume/resume.html")
 
 def download_resume(request):
-    fsock = open('/Users/adrienne/workspace/resume_generator/resume/tmp/tmprmypzh69', 'rb')
+    file = request.GET['file']
+    fsock = open(file, 'rb')
     response = HttpResponse(fsock, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=myfile.pdf'
 

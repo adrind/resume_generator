@@ -31,8 +31,9 @@ Vue.component('list', {
         }
     },
     template: '<div class="list">' +
-    '<ul v-if="values" id="example-1"><li v-for="data in values">{{ data.value }}</li></ul>' +
-    '<input v-model="newItem"/><button class="btn btn-base" v-on:click="addToList">Add to list</button>' +
+    '<ul id="example-1"><li v-for="data in values">{{ data.value }}</li><li><input v-model="newItem" @keyup.enter="addToList"/>' +
+    '<button class="btn btn-base" v-on:click="addToList">Add</button>' +
+    '</li></ul>' +
     '</div>',
     methods: {
         addToList: function () {
@@ -166,14 +167,17 @@ var app = new Vue({
             createHeaderField('name', 'Adrienne Dreyfus', 'What is your name?', {isActive: true}),
             createHeaderField('address', '3099 Washington st', 'What is your address?'),
             createHeaderField('city', 'San Francisco, CA', 'What is your city?'),
-            createResumeField('objective', 'To get better at work', "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
-            createSimpleList('skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: ['Cooking', 'Cleaning'], isSimpleList: true}}),
-            createRichList('education', "What education do you have?", {listFields: [{key: 'header', value: 'School name'}, {key:'dates', value: 'Years attended'}, {key:'values',value:'Things you did', isList: true}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}})
+            createResumeField('Objective', 'To get better at work', "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
+            createSimpleList('Skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: ['Cooking', 'Cleaning'], isSimpleList: true}}),
+            createRichList('Education', "What education do you have?", {listFields: [{key: 'header', value: 'School name'}, {key:'dates', value: 'Years attended'}, {key:'values',value:'Things you did', isList: true}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}}),
+            createRichList('Professional Experience', "What work experience do you have?", {listFields: [{key: 'header', value: 'Title, Place of Work'}, {key:'dates', value: 'Years worked there'}, {key:'values',value:'Things you did', isList: true}],label: 'Add work experience:', header: 'Professional Experience', list: {values: [{header: 'Code for America', dates:'Feb 01 2017 - Oct 27 2017', values:[{value: 'Wrote some code'}, {value: 'Had fun'}]}]}})
+
         ],
         done: false,
         activeIndex: 0,
         newListItem: '',
-        newRichListItem: {}
+        newRichListItem: {},
+        isAddingNewItem: false
     },
     methods: {
         nextButtonClicked: function (event) {
@@ -213,6 +217,9 @@ var app = new Vue({
             activeFrame.list.values.push(this.newRichListItem);
             this.newRichListItem = {};
         },
+        addNewItem: function (event) {
+          this.isAddingNewItem = true;
+        },
         printResume: function (event) {
             var requestData = [];
             this.resume.forEach(function(field){
@@ -237,8 +244,8 @@ var app = new Vue({
                 contentType: 'application/json',
                 data: JSON.stringify(requestData),
                 processData: false,
-                success : function(callback){
-
+                success : function(response){
+                    window.location = '/resume/download?file='+response.fileName;
                 },
                 error : function(callback){
 

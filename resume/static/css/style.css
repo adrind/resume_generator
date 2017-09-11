@@ -120,6 +120,10 @@ p {
     font-family: "Times New Roman";
 }
 
+.preview-item h3 {
+    max-width: 100px;
+}
+
 .resume-preview label {
     font-weight: bold;
 }
@@ -174,6 +178,10 @@ p {
     margin-bottom: 10px;
 }
 
+/* List vue */
+.new-list-item label {
+    width: 100%;
+}
 
 
 @media (max-width: 500px) {
