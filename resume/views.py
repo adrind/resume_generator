@@ -13,6 +13,7 @@ import json
 RESUME1_HEADER_COLOR = colors.Color(.75, .12, .12)
 RESUME1_FIELD_HEADER_COLOR = colors.Color(0, .5, .5)
 
+#Stylesheet used to style our PDF
 def create_stylesheet():
     global styles, style
 
@@ -86,6 +87,7 @@ SECOND_COL_WIDTH = (WIDTH - LEFT_MARGIN) * 4/5
 SECOND_COL_START = FIRST_COL_WIDTH + LEFT_MARGIN
 
 
+#Header fields are simple fields used at the top of a resume
 def create_header_field(canvas, starting_height, body):
     field = Paragraph(body, style=styles['Header'])
     w1, h1 = field.wrap(WIDTH, MAX_HEIGHT)
@@ -93,7 +95,7 @@ def create_header_field(canvas, starting_height, body):
 
     return starting_height - h1
 
-
+#A resume field is a basic field that spans two columns: a header (left col) and body (right col)
 def create_resume_field(canvas, starting_height, header_text, body_paragraph):
     header = Paragraph(header_text, style=styles['Field-Header'])
     objective = Paragraph(body_paragraph, style=style)
@@ -106,7 +108,7 @@ def create_resume_field(canvas, starting_height, header_text, body_paragraph):
 
     return starting_height - h1 if h1 > h2 else starting_height - h2
 
-
+#A list is a simple component with a header (left col) and bullet list (right col)
 def create_list_resume_field(canvas, starting_height, header_text, list_data):
     header = Paragraph(header_text, style=styles['Field-Header'])
 
@@ -142,7 +144,8 @@ def create_rich_list_section(section):
 
     return paragraphs
 
-
+#A rich list has multiple fields
+#A header for the left column, list_data, or body (TODO)
 def create_rich_list(canvas, starting_height, header_text, list_data):
     header = Paragraph(header_text, style=styles['Field-Header'])
 
@@ -179,9 +182,9 @@ def get_resume(request):
     response = HttpResponse(content_type='application/pdf')
 
     # Create the PDF object, using the response object as its "file."
+    # This will not actually get sent back
     p = canvas.Canvas(response, pagesize=letter)
 
-    p.setFont('Times-Roman', 16)
     starting_height = TOP_MARGIN
 
     for field in data:
@@ -197,13 +200,11 @@ def get_resume(request):
             starting_height -= SPACER
             starting_height = create_rich_list(p, starting_height, field['id'], field['value'])
 
-    # Draw things on the PDF. Here's where the PDF generation happens.
-    # See the ReportLab documentation for the full list of functionality.
-
     # Close the PDF object cleanly, and we're done.
     p.showPage()
     with NamedTemporaryFile(dir=os.path.dirname(os.path.abspath(__file__))+'/tmp', delete=False) as tmp:
         tmp.write(p.getpdfdata())
 
     p.save()
+    #Send response with path of temporary file name
     return JsonResponse({'fileName': tmp.name})
