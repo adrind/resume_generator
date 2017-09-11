@@ -1,6 +1,6 @@
 <rich-list-item v-for="data in item.list.values" :value="data" :isEditing="false"></rich-list-item>
 
-<button v-if="!isAddingNewItem" class="btn-base btn" v-on:click="addNewItem">Add new [item.header]</button>
+<button v-if="!isAddingNewItem" class="btn btn-base-alt" v-on:click="addNewItem">Add new [item.header]</button>
 <div class="new-list-item" v-if="isAddingNewItem">
     <template v-for="field in item.listFields">
         <label>[field.value]
@@ -8,5 +8,5 @@
             <input v-else v-model="newRichListItem[field.key]"/>
         </label>
     </template>
-    <button v-if="item.list" class="btn btn-base" v-on:click="addToRichList">Add new [item.header]</button>
+    <button v-if="item.list" class="btn btn-base-alt" v-on:click="addToRichList">Add new [item.header]</button>
 </div>

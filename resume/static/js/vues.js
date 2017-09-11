@@ -32,7 +32,7 @@ Vue.component('list', {
     },
     template: '<div class="list">' +
     '<ul id="example-1"><li v-for="data in values">{{ data.value }}</li><li><input v-model="newItem" @keyup.enter="addToList"/>' +
-    '<button class="btn btn-base" v-on:click="addToList">Add</button>' +
+    '<button class="btn btn-base-alt" v-on:click="addToList">Add</button>' +
     '</li></ul>' +
     '</div>',
     methods: {
@@ -193,6 +193,7 @@ var app = new Vue({
             }
 
             this.activeIndex = newActiveIndex;
+            this.isAddingNewItem = false;
         },
         backButtonClicked: function (event) {
             var activeIndex = this.activeIndex,
@@ -205,6 +206,7 @@ var app = new Vue({
             }
 
             this.activeIndex = newActiveIndex;
+            this.isAddingNewItem = false;
         },
         addToList: function (event) {
             var activeFrame = this.resume[this.activeIndex];

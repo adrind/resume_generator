@@ -91,6 +91,18 @@ p {
     width: 100px;
 }
 
+.btn-base-alt {
+    background-color: #FFCC33;
+    color: #071C49;
+}
+
+.btn-base-alt:hover {
+    background-color: #071C49;
+    color: #FFCC33;
+    cursor: pointer;
+}
+
+
 #resume-preview .btn-link,
 #resume-preview .btn-link:focus,
 #resume-preview .btn-link:hover {
