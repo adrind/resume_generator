@@ -2,16 +2,60 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet, ListStyle
+from reportlab.lib.styles import getSampleStyleSheet, ListStyle, ParagraphStyle, StyleSheet1
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph, ListFlowable
 from tempfile import NamedTemporaryFile
 from django.http import JsonResponse
 import os
 import json
+def create_stylesheet():
+    global styles, style
 
-styles = getSampleStyleSheet()
-style = styles["Normal"]
+    fontName = 'Times-Roman'
+
+    stylesheet = StyleSheet1()
+    stylesheet.add(ParagraphStyle(name = 'Normal',
+                                  fontName = fontName,
+                                  fontSize = 16,
+                                  leading = 18,
+                                  spaceAfter=5))
+
+    stylesheet.add(ParagraphStyle(name = 'Header',
+                                  parent=stylesheet['Normal'],
+                                  fontSize = 18,
+                                  leading = 21))
+
+    stylesheet.add(ParagraphStyle(name = 'Field-Header',
+                                  parent=stylesheet['Normal'],
+                                  fontSize = 18,
+                                  leading = 21,
+                                  textColor = colors.Color(0.5, 0.08, 0.08)
+                                  ))
+
+    stylesheet.add(ListStyle(name='UnorderedList',
+                                parent=None,
+                                leftIndent=18,
+                                rightIndent=0,
+                                bulletAlign='left',
+                                bulletType='1',
+                                bulletColor=colors.black,
+                                bulletFontName='Times-Roman',
+                                bulletFontSize=16,
+                                bulletOffsetY=0,
+                                bulletDedent='auto',
+                                bulletDir='ltr',
+                                bulletFormat=None,
+                                #start='circle square blackstar sparkle disc diamond'.split(),
+                                start=None,
+                            ),
+                   alias='ul')
+
+    return stylesheet
+
+
+styles = create_stylesheet()
+style = styles['Normal']
 list_style = styles["UnorderedList"]
 
 # Create your views here.
@@ -32,7 +76,7 @@ SECOND_COL_START = FIRST_COL_WIDTH + LEFT_MARGIN
 
 
 def create_header_field(canvas, starting_height, body):
-    field = Paragraph(body, style=style)
+    field = Paragraph(body, style=styles['Header'])
     w1, h1 = field.wrap(WIDTH, MAX_HEIGHT)
     field.drawOn(canvas, LEFT_MARGIN, starting_height)
 
@@ -40,7 +84,7 @@ def create_header_field(canvas, starting_height, body):
 
 
 def create_resume_field(canvas, starting_height, header_text, body_paragraph):
-    header = Paragraph(header_text, style=style)
+    header = Paragraph(header_text, style=styles['Field-Header'])
     objective = Paragraph(body_paragraph, style=style)
 
     w1, h1 = header.wrap(FIRST_COL_WIDTH, MAX_HEIGHT)
@@ -53,7 +97,7 @@ def create_resume_field(canvas, starting_height, header_text, body_paragraph):
 
 
 def create_list_resume_field(canvas, starting_height, header_text, list_data):
-    header = Paragraph(header_text, style=style)
+    header = Paragraph(header_text, style=styles['Field-Header'])
 
     bullet_list = []
     for skill in list_data:
@@ -89,7 +133,7 @@ def create_rich_list_section(section):
 
 
 def create_rich_list(canvas, starting_height, header_text, list_data):
-    header = Paragraph(header_text, style=style)
+    header = Paragraph(header_text, style=styles['Field-Header'])
 
     w1, h1 = header.wrapOn(canvas, FIRST_COL_WIDTH, MAX_HEIGHT)
     header.drawOn(canvas, LEFT_MARGIN, starting_height - h1)

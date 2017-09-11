@@ -22,7 +22,7 @@
             <div class="row mt-4">
                 <div class="btn-section">
                 <button class="btn btn-base btn-base-lg mr-2" v-on:click="backButtonClicked" v-if="activeIndex != 0"><i class="fa fa-angle-left mr-2" aria-hidden="true"></i> Back</button>
-                <button class="btn btn-base btn-base-lg float-right" v-on:click="nextButtonClicked">Next <i class="fa fa-angle-right ml-2" aria-hidden="true"></i></button>
+                <button class="btn btn-base btn-base-lg float-right" v-on:click="nextButtonClicked" v-if="!done">Next <i class="fa fa-angle-right ml-2" aria-hidden="true"></i></button>
                 </div>
             </div>
         </div>
