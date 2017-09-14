@@ -113,8 +113,8 @@ def create_list_resume_field(canvas, starting_height, header_text, list_data):
     header = Paragraph(header_text, style=styles['Field-Header'])
 
     bullet_list = []
-    for skill in list_data:
-        bullet_list.append(Paragraph(skill, style=style))
+    for item in list_data:
+        bullet_list.append(Paragraph(item['value'], style=style))
     list_flow = ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
         bulletFontSize=16, style=list_style)
 

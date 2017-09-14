@@ -7,7 +7,7 @@ Vue.component('preview-field', {
 Vue.component('simple-list-preview', {
     props: ['list'],
     template: '<div class="resume-list">' +
-        '<ul id="example-1"><li v-for="data in list">{{ data }}</li></ul>' +
+        '<ul id="example-1"><li v-for="data in list">{{ data.value }}</li></ul>' +
         '</div>'
 });
 
@@ -22,16 +22,24 @@ Vue.component('rich-list-preview', {
         '</div>'
 });
 
+Vue.component('simple-list-item', {
+    props: ['value', 'isEditing'],
+    template: '<li class="skill">' +
+              '{{value}}' +
+              '<input v-model="value" v-if="isEditing">' +
+              '</li>'
+});
+
 Vue.component('list', {
     props: ['values'],
     data: function () {
         return {
             newItem: '',
-            items: []
+            items: this.values
         }
     },
     template: '<div class="list">' +
-    '<ul id="example-1"><li v-for="data in values">{{ data.value }}</li><li><input v-model="newItem" @keyup.enter="addToList"/>' +
+    '<ul><simple-list-item :value="data.value" :isEditing="false" v-for="data in values"></simple-list-item><li><input v-model="newItem" @keyup.enter="addToList"/>' +
     '<button class="btn btn-base-alt" v-on:click="addToList">Add</button>' +
     '</li></ul>' +
     '</div>',
@@ -42,14 +50,6 @@ Vue.component('list', {
             this.$emit('update:values', this.items);
         }
     }
-});
-
-Vue.component('simple-list-item', {
-    props: ['value', 'isEditing'],
-    template: '<div class="skill">' +
-              '{{value}}' +
-              '<input v-model="value" v-if="isEditing">' +
-              '</div>'
 });
 
 Vue.component('rich-list-item', {
@@ -170,7 +170,7 @@ var app = new Vue({
             createHeaderField('city', 'San Francisco, CA', 'What is your city?'),
             createHeaderField('email', 'adrienne@codeforamerica.org', 'What is your email address?'),
             createResumeField('Objective', 'To get better at work', "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
-            createSimpleList('Skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: ['Cooking', 'Cleaning'], isSimpleList: true}}),
+            createSimpleList('Skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: [{value:'Cooking'}, {value:'Cleaning'}], isSimpleList: true}}),
             createRichList('Education', "What education do you have?", {listFields: [{key: 'header', value: 'School name'}, {key:'dates', value: 'Years attended'}, {key:'values',value:'Things you did', isList: true}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}}),
             createRichList('Professional Experience', "What work experience do you have?", {listFields: [{key: 'header', value: 'Title, Place of Work'}, {key:'dates', value: 'Years worked there'}, {key:'values',value:'Things you did', isList: true}],label: 'Add work experience:', header: 'Professional Experience', list: {values: [{header: 'Code for America', dates:'Feb 01 2017 - Oct 27 2017', values:[{value: 'Wrote some code'}, {value: 'Had fun'}]}]}})
         ],

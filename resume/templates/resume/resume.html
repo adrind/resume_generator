@@ -5,10 +5,10 @@
     <div class="row" id="resume-preview">
         <div class="col">
             <div class="row" v-for="item in resume">
-                <div class="section" v-if="item.isActive">
+                <div class="section" v-if="item.isActive" v-bind:class="[item.id]">
                     <h2 class="h2-heading"><strong>[item.header]</strong></h2>
                     <div v-if="item.isSimpleList">
-                        {% include 'resume/includes/simple_list.html' %}
+                        <list :values="item.list.values"></list>
                     </div>
                     <div v-if="item.isRichList">
                         {% include 'resume/includes/rich_list.html' %}
