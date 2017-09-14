@@ -57,8 +57,8 @@ Vue.component('list', {
                 source: skillsBloodhound
             }).bind('typeahead:select', function (ev, suggestion) {
                 var result = suggestion.normalized_skill_name;
-                result[0] = result[0].toUpperCase(); //Capitalize skill name so it looks good on a resume
-                scope.newItem = result
+                result = result && result[0].toUpperCase() + result.slice(1); //Capitalize skill name so it looks good on a resume
+                scope.newItem = result;
             });
         }
     },
