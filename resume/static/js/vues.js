@@ -39,15 +39,19 @@ Vue.component('simple-list-item', {
           hasHover: false
       }
     },
-    template: '<li class="item" v-on:hover="onHover">' +
-              '{{value}}' +
-              '<input v-model="value" v-if="isEditing">' +
-        '<span class="icons float-right">' +
-              '<i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>' +
-              '</li>',
+    template:   '<li class="item" v-on:hover="onHover">' +
+                '{{value}}' +
+                '<input v-model="value" v-if="isEditing">' +
+                '<span class="icons float-right">' +
+                    '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>' +
+                    '<i class="fa fa-times" aria-hidden="true" v-on:click="removeItem"></i></span>' +
+                '</li>',
     methods: {
         onHover: function () {
             this.hasHover.toggle()
+        },
+        removeItem: function () {
+            this.$emit('remove', this.value);
         }
     }
 });
@@ -74,7 +78,7 @@ Vue.component('list', {
         }
     },
     template: '<div class="list">' +
-    '<ul><simple-list-item :value="data.value" :isEditing="false" v-for="data in values"></simple-list-item><li><input v-model="newItem" @keyup.enter="addToList" class="newItemInput"/>' +
+    '<ul><simple-list-item :value="data.value" :isEditing="false" v-for="data in items" v-on:remove="removeFromList"></simple-list-item><li><input v-model="newItem" @keyup.enter="addToList" class="newItemInput"/>' +
     '<button class="btn btn-base-alt float-right" v-on:click="addToList">Add</button>' +
     '</li></ul>' +
     '</div>',
@@ -83,6 +87,14 @@ Vue.component('list', {
             if(this.newItem) {
                 this.items.push({value: this.newItem});
                 this.newItem = '';
+                this.$emit('update:values', this.items);
+            }
+        },
+        removeFromList: function (value) {
+            if(value) {
+                this.items = _.reject(this.items, function (item) {
+                    return value === item.value;
+                });
                 this.$emit('update:values', this.items);
             }
         }
