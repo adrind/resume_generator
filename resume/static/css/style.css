@@ -190,15 +190,16 @@ p {
 }
 
 /* List vue */
+.list {
+    width: 80%;
+}
+
 .new-list-item label {
     width: 100%;
 }
 
 #resume-1 .preview-header {
     color: #003535;
-}
-
-#resume-1 .preview-rich-list-header {
 }
 
 

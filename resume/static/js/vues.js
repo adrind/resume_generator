@@ -34,10 +34,22 @@ Vue.component('rich-list-preview', {
 
 Vue.component('simple-list-item', {
     props: ['value', 'isEditing'],
-    template: '<li class="skill">' +
+    data: function () {
+      return {
+          hasHover: false
+      }
+    },
+    template: '<li class="item" v-on:hover="onHover">' +
               '{{value}}' +
               '<input v-model="value" v-if="isEditing">' +
-              '</li>'
+        '<span class="icons float-right">' +
+              '<i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>' +
+              '</li>',
+    methods: {
+        onHover: function () {
+            this.hasHover.toggle()
+        }
+    }
 });
 
 Vue.component('list', {
@@ -57,14 +69,13 @@ Vue.component('list', {
                 source: skillsBloodhound
             }).bind('typeahead:select', function (ev, suggestion) {
                 var result = suggestion.normalized_skill_name;
-                result = result && result[0].toUpperCase() + result.slice(1); //Capitalize skill name so it looks good on a resume
                 scope.newItem = result;
             });
         }
     },
     template: '<div class="list">' +
     '<ul><simple-list-item :value="data.value" :isEditing="false" v-for="data in values"></simple-list-item><li><input v-model="newItem" @keyup.enter="addToList" class="newItemInput"/>' +
-    '<button class="btn btn-base-alt" v-on:click="addToList">Add</button>' +
+    '<button class="btn btn-base-alt float-right" v-on:click="addToList">Add</button>' +
     '</li></ul>' +
     '</div>',
     methods: {
@@ -196,7 +207,7 @@ var app = new Vue({
             createHeaderField('city', 'San Francisco, CA', 'What is your city?'),
             createHeaderField('email', 'adrienne@codeforamerica.org', 'What is your email address?'),
             createResumeField('Objective', 'To get better at work', "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
-            createSimpleList('Skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: [{value:'Cooking'}, {value:'Cleaning'}], isSimpleList: true}}),
+            createSimpleList('Skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: [{value:'cooking'}, {value:'coding'}], isSimpleList: true}}),
             createRichList('Education', "What education do you have?", {listFields: [{key: 'header', value: 'School name'}, {key:'dates', value: 'Years attended'}, {key:'values',value:'Things you did', isList: true}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}}),
             createRichList('Professional Experience', "What work experience do you have?", {listFields: [{key: 'header', value: 'Title, Place of Work'}, {key:'dates', value: 'Years worked there'}, {key:'values',value:'Things you did', isList: true}],label: 'Add work experience:', header: 'Professional Experience', list: {values: [{header: 'Code for America', dates:'Feb 01 2017 - Oct 27 2017', values:[{value: 'Wrote some code'}, {value: 'Had fun'}]}]}})
         ],
