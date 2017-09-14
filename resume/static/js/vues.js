@@ -1,3 +1,13 @@
+var skillsBloodhound = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+        url: 'http://api.dataatwork.org/v1/skills/autocomplete?begins_with=%QUERY',
+        wildcard: '%QUERY'
+    }
+});
+
+
 Vue.component('preview-field', {
     props: ['item', 'header'],
     delimiters: ["[", "]"],
@@ -31,23 +41,39 @@ Vue.component('simple-list-item', {
 });
 
 Vue.component('list', {
-    props: ['values'],
+    props: ['values', 'id'],
     data: function () {
         return {
             newItem: '',
-            items: this.values
+            items: this.values || []
+        }
+    },
+    mounted: function () {
+        var scope = this;
+        if(this.id === 'Skills') {
+            $('.'+this.id+ ' .newItemInput').typeahead(null, {
+                name: 'new-skill',
+                display: 'normalized_skill_name',
+                source: skillsBloodhound
+            }).bind('typeahead:select', function (ev, suggestion) {
+                var result = suggestion.normalized_skill_name;
+                result[0] = result[0].toUpperCase(); //Capitalize skill name so it looks good on a resume
+                scope.newItem = result
+            });
         }
     },
     template: '<div class="list">' +
-    '<ul><simple-list-item :value="data.value" :isEditing="false" v-for="data in values"></simple-list-item><li><input v-model="newItem" @keyup.enter="addToList"/>' +
+    '<ul><simple-list-item :value="data.value" :isEditing="false" v-for="data in values"></simple-list-item><li><input v-model="newItem" @keyup.enter="addToList" class="newItemInput"/>' +
     '<button class="btn btn-base-alt" v-on:click="addToList">Add</button>' +
     '</li></ul>' +
     '</div>',
     methods: {
         addToList: function () {
-            this.items.push({value: this.newItem});
-            this.newItem = '';
-            this.$emit('update:values', this.items);
+            if(this.newItem) {
+                this.items.push({value: this.newItem});
+                this.newItem = '';
+                this.$emit('update:values', this.items);
+            }
         }
     }
 });
