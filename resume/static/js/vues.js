@@ -33,17 +33,20 @@ Vue.component('rich-list-preview', {
 });
 
 Vue.component('simple-list-item', {
-    props: ['value', 'isEditing'],
+    props: ['value'],
     data: function () {
       return {
-          hasHover: false
+          hasHover: false,
+          isEditing: false,
+          item: this.value
       }
     },
     template:   '<li class="item" v-on:hover="onHover">' +
-                '{{value}}' +
-                '<input v-model="value" v-if="isEditing">' +
-                '<span class="icons float-right">' +
-                    '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>' +
+                '<span v-if="!isEditing">{{item}}</span>' +
+                '<input v-model="item" v-if="isEditing">' +
+                '<button class="btn btn-base-alt" v-if="isEditing" v-on:click="updateItem">Save</button>' +
+                '<span class="icons float-right" v-if="!isEditing">' +
+                    '<i class="fa fa-pencil-square-o" aria-hidden="true" v-on:click="editItem"></i>' +
                     '<i class="fa fa-times" aria-hidden="true" v-on:click="removeItem"></i></span>' +
                 '</li>',
     methods: {
@@ -51,7 +54,14 @@ Vue.component('simple-list-item', {
             this.hasHover.toggle()
         },
         removeItem: function () {
-            this.$emit('remove', this.value);
+            this.$emit('remove', this.item);
+        },
+        editItem: function () {
+            this.isEditing = true;
+        },
+        updateItem: function () {
+            this.isEditing = false;
+            this.$emit('update:value', this.item);
         }
     }
 });
@@ -78,7 +88,7 @@ Vue.component('list', {
         }
     },
     template: '<div class="list">' +
-    '<ul><simple-list-item :value="data.value" :isEditing="false" v-for="data in items" v-on:remove="removeFromList"></simple-list-item><li><input v-model="newItem" @keyup.enter="addToList" class="newItemInput"/>' +
+    '<ul><simple-list-item :value.sync="data.value" v-for="(data, i) in items" :key="i" v-on:remove="removeFromList"></simple-list-item><li><input v-model="newItem" @keyup.enter="addToList" class="newItemInput"/>' +
     '<button class="btn btn-base-alt float-right" v-on:click="addToList">Add</button>' +
     '</li></ul>' +
     '</div>',

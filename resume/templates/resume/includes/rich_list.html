@@ -1,4 +1,4 @@
-<rich-list-item v-for="data in item.list.values" :value="data" :isEditing="false"></rich-list-item>
+<rich-list-item v-for="(data,i) in item.list.values" :key="i" :value="data" :isEditing="false"></rich-list-item>
 
 <button v-if="!isAddingNewItem" class="btn btn-base-alt" v-on:click="addNewItem">Add new [item.header]</button>
 <div class="new-list-item" v-if="isAddingNewItem">
