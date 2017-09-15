@@ -233,7 +233,6 @@ var app = new Vue({
             createRichList('Education', "What education do you have?", {listFields: [{key: 'header', value: 'School name'}, {key:'dates', value: 'Years attended'}, {key:'values',value:'Things you did', isList: true}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}}),
             createRichList('Work', "What work experience do you have?", {listFields: [{key: 'header', value: 'Title, Place of Work'}, {key:'dates', value: 'Years worked there'}, {key:'values',value:'Things you did', isList: true}],label: 'Add work experience:', header: 'Professional Experience', list: {values: [{header: 'Code for America', dates:'Feb 01 2017 - Oct 27 2017', values:[{value: 'Wrote some code'}, {value: 'Had fun'}]}]}})
         ],
-        done: false,
         activeIndex: 0,
         newListItem: '',
         newRichListItem: {},
@@ -247,11 +246,7 @@ var app = new Vue({
 
             this.resume[activeIndex].isActive = false;
             this.resume[newActiveIndex].isActive = true;
-
-            if(newActiveIndex === this.resume.length - 1) {
-                this.done = true;
-            }
-
+            
             this.activeIndex = newActiveIndex;
             this.isAddingNewItem = false;
         },
@@ -265,7 +260,6 @@ var app = new Vue({
                 this.resume[activeIndex - 1].isActive = true;
             }
 
-            this.done = false;
             this.activeIndex = newActiveIndex;
             this.isAddingNewItem = false;
         },

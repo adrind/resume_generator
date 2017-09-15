@@ -18,25 +18,27 @@
         </div>
         <div class="row">
             <div class="col">
-                <div class="row" v-for="item in resume">
-                    <div class="section" v-if="item.isActive" v-bind:class="[item.id]">
-                        <h2 class="h2-heading"><strong>[item.header]</strong></h2>
-                        <div v-if="item.isSimpleList">
-                            <list :values.sync="item.list.values" :id="item.id" :key="item.id"></list>
-                        </div>
-                        <div v-if="item.isRichList">
-                            {% include 'resume/includes/rich_list.html' %}
-                        </div>
-                        <div v-if="item.isField">
-                            <textarea v-if="item.isTextArea" v-model="item.data"></textarea>
-                            <input v-else v-model="item.data"/>
+                <div class="resume-section">
+                    <div class="row" v-for="item in resume">
+                        <div class="section" v-if="item.isActive" v-bind:class="[item.id]">
+                            <h2 class="h2-heading"><strong>[item.header]</strong></h2>
+                            <div v-if="item.isSimpleList">
+                                <list :values.sync="item.list.values" :id="item.id" :key="item.id"></list>
+                            </div>
+                            <div v-if="item.isRichList">
+                                {% include 'resume/includes/rich_list.html' %}
+                            </div>
+                            <div v-if="item.isField">
+                                <textarea v-if="item.isTextArea" v-model="item.data"></textarea>
+                                <input v-else v-model="item.data"/>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row mt-4">
                     <div class="btn-section">
                     <button class="btn btn-base btn-base-lg mr-2" v-on:click="backButtonClicked" v-if="activeIndex != 0"><i class="fa fa-angle-left mr-2" aria-hidden="true"></i> Back</button>
-                    <button class="btn btn-base btn-base-lg float-right" v-on:click="nextButtonClicked" v-if="!done">Next <i class="fa fa-angle-right ml-2" aria-hidden="true"></i></button>
+                    <button class="btn btn-base btn-base-lg float-right" v-on:click="nextButtonClicked" v-if="activeIndex != resume.length-1">Next <i class="fa fa-angle-right ml-2" aria-hidden="true"></i></button>
                     </div>
                 </div>
             </div>

@@ -208,6 +208,10 @@ p {
     padding-left: 15px;
 }
 
+.resume-section {
+    min-height: 200px;
+}
+
 /* Rich List */
 
 .rich-list-item {
