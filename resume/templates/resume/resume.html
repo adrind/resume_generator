@@ -6,19 +6,13 @@
         <div class="row mb-4" id="progress-bar">
             <div class="progress-bar-circle col text-center" v-for="(item, i) in resume">
                 <div class="circle-container" v-on:click="nextButtonClicked" v-bind:data-id="i">
-                    <span class="circle" v-bind:class="{'done': i < activeIndex, 'current': i == activeIndex}" v-bind:data-id="i">[i+1]</span>
+                    <span class="circle" @keyup.enter="nextButtonClicked" v-bind:class="{'done': i < activeIndex, 'current': i == activeIndex}" v-bind:data-id="i" role="button" tabindex="0">[i+1]</span>
                 </div>
                 <span class="circle-text" v-on:click="nextButtonClicked" v-bind:data-id="i">[ item.id ]</span>
             </div>
             <div class="col col-md-2 col-lg-2">
                 <div class="translator mb-4">
                     <div id="google_translate_element" class="mt-2"></div>
-                    <script type="text/javascript">
-                        function googleTranslateElementInit() {
-                          new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
-                        }
-                    </script>
-                    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
                 </div>
             </div>
         </div>
@@ -61,6 +55,12 @@
 {% endblock %}
 
 {% block extra_js %}
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+          new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script src="https://unpkg.com/vue"></script>
     <script src="{% static 'js/underscore.js' %}"></script>
     <script src="{% static 'js/vues.js' %}"></script>

@@ -243,7 +243,7 @@ var app = new Vue({
         nextButtonClicked: function (event) {
             var index = $(event.target).data('id');
             var activeIndex = this.activeIndex,
-                newActiveIndex = index || activeIndex + 1;
+                newActiveIndex = index === undefined ? activeIndex + 1 : index;
 
             this.resume[activeIndex].isActive = false;
             this.resume[newActiveIndex].isActive = true;
