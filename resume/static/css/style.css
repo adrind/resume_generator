@@ -147,6 +147,10 @@ p {
     width: 80%;
 }
 
+.section .h2-heading {
+    margin-bottom: 15px; /* Aligns the preview side with fields */
+}
+
 .print-btn {
     height: 50px;
 }

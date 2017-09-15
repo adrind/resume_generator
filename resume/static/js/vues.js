@@ -46,8 +46,8 @@ Vue.component('simple-list-item', {
                 '<input v-model="item" v-if="isEditing">' +
                 '<button class="btn btn-base-alt" v-if="isEditing" v-on:click="updateItem">Save</button>' +
                 '<span class="icons float-right" v-if="!isEditing">' +
-                    '<i class="fa fa-pencil-square-o" aria-hidden="true" v-on:click="editItem"></i>' +
-                    '<i class="fa fa-times" aria-hidden="true" v-on:click="removeItem"></i></span>' +
+                    '<i class="fa fa-pencil-square-o" aria-hidden="true" v-on:click="editItem" tabindex="0" @keyup.enter="editItem"></i>' +
+                    '<i class="fa fa-times" aria-hidden="true" v-on:click="removeItem" tabindex="0" @keyup.enter="removeItem"></i></span>' +
                 '</li>',
     methods: {
         onHover: function () {
@@ -246,7 +246,7 @@ var app = new Vue({
 
             this.resume[activeIndex].isActive = false;
             this.resume[newActiveIndex].isActive = true;
-            
+
             this.activeIndex = newActiveIndex;
             this.isAddingNewItem = false;
         },
