@@ -28,6 +28,33 @@
     text-align: right;
 }
 
+.progress-bar-circle {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.progress-bar-circle .circle {
+    border: 1px solid #071C49;
+    border-radius: 50%;
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.progress-bar-circle .circle.done {
+    background-color: #071C49;
+    color: #FFCC33;
+}
+
+.progress-bar-circle .circle.current {
+    background-color: #FFCC33;
+    color: #071C49;
+}
+
+.progress-bar-circle .circle-text {
+    font-size: 12px;
+    cursor: pointer;
+}
+
 .contact-text,
 .language {
     margin-top: 50px;

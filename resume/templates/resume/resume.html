@@ -2,39 +2,60 @@
 {% load static %}
 
 {% block content %}
-    <div class="row" id="resume-preview">
-        <div class="col">
-            <div class="row" v-for="item in resume">
-                <div class="section" v-if="item.isActive" v-bind:class="[item.id]">
-                    <h2 class="h2-heading"><strong>[item.header]</strong></h2>
-                    <div v-if="item.isSimpleList">
-                        <list :values.sync="item.list.values" :id="item.id" :key="item.id"></list>
-                    </div>
-                    <div v-if="item.isRichList">
-                        {% include 'resume/includes/rich_list.html' %}
-                    </div>
-                    <div v-if="item.isField">
-                        <textarea v-if="item.isTextArea" v-model="item.data"></textarea>
-                        <input v-else v-model="item.data"/>
-                    </div>
+    <section id="resume-preview">
+        <div class="row mb-4" id="progress-bar">
+            <div class="progress-bar-circle col text-center" v-for="(item, i) in resume">
+                <div class="circle-container" v-on:click="nextButtonClicked" v-bind:data-id="i">
+                    <span class="circle" v-bind:class="{'done': i < activeIndex, 'current': i == activeIndex}" v-bind:data-id="i">[i+1]</span>
                 </div>
+                <span class="circle-text" v-on:click="nextButtonClicked" v-bind:data-id="i">[ item.id ]</span>
             </div>
-            <div class="row mt-4">
-                <div class="btn-section">
-                <button class="btn btn-base btn-base-lg mr-2" v-on:click="backButtonClicked" v-if="activeIndex != 0"><i class="fa fa-angle-left mr-2" aria-hidden="true"></i> Back</button>
-                <button class="btn btn-base btn-base-lg float-right" v-on:click="nextButtonClicked" v-if="!done">Next <i class="fa fa-angle-right ml-2" aria-hidden="true"></i></button>
+            <div class="col col-md-2 col-lg-2">
+                <div class="translator mb-4">
+                    <div id="google_translate_element" class="mt-2"></div>
+                    <script type="text/javascript">
+                        function googleTranslateElementInit() {
+                          new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+                        }
+                    </script>
+                    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
                 </div>
             </div>
         </div>
-        <div class="col preview">
-            <div class="print-btn">
-                <button class="btn btn-base float-right" v-on:click="printResume"><i class="fa fa-print" aria-hidden="true"></i> Print your resume </button>
+        <div class="row">
+            <div class="col">
+                <div class="row" v-for="item in resume">
+                    <div class="section" v-if="item.isActive" v-bind:class="[item.id]">
+                        <h2 class="h2-heading"><strong>[item.header]</strong></h2>
+                        <div v-if="item.isSimpleList">
+                            <list :values.sync="item.list.values" :id="item.id" :key="item.id"></list>
+                        </div>
+                        <div v-if="item.isRichList">
+                            {% include 'resume/includes/rich_list.html' %}
+                        </div>
+                        <div v-if="item.isField">
+                            <textarea v-if="item.isTextArea" v-model="item.data"></textarea>
+                            <input v-else v-model="item.data"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="btn-section">
+                    <button class="btn btn-base btn-base-lg mr-2" v-on:click="backButtonClicked" v-if="activeIndex != 0"><i class="fa fa-angle-left mr-2" aria-hidden="true"></i> Back</button>
+                    <button class="btn btn-base btn-base-lg float-right" v-on:click="nextButtonClicked" v-if="!done">Next <i class="fa fa-angle-right ml-2" aria-hidden="true"></i></button>
+                    </div>
+                </div>
             </div>
-            <div class="preview-page" id="resume-1">
-                <preview-field v-for="item in resume" :item="item" :list="item.list" :data="item.data" :key="item.id" :header="item.previewHeader" v-bind:class="[item.id, {hasHeader: item.previewHeader}, {hasList: item.list}]" class="resume-field"></preview-field>
+            <div class="col preview">
+                <div class="print-btn">
+                    <button class="btn btn-base float-right" v-on:click="printResume"><i class="fa fa-print" aria-hidden="true"></i> Print your resume </button>
+                </div>
+                <div class="preview-page" id="resume-1">
+                    <preview-field v-for="item in resume" :item="item" :list="item.list" :data="item.data" :key="item.id" :header="item.previewHeader" v-bind:class="[item.id, {hasHeader: item.previewHeader}, {hasList: item.list}]" class="resume-field"></preview-field>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
     {% include 'resume/includes/rich_list_item.html' %}
     {% include 'resume/includes/preview.html' %}
 {% endblock %}

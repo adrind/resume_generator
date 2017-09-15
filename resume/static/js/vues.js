@@ -224,14 +224,14 @@ var app = new Vue({
     el: '#resume-preview',
     data: {
         resume: [
-            createHeaderField('name', 'Adrienne Dreyfus', 'What is your name?', {isActive: true}),
-            createHeaderField('address', '3099 Washington st', 'What is your address?'),
-            createHeaderField('city', 'San Francisco, CA', 'What is your city?'),
-            createHeaderField('email', 'adrienne@codeforamerica.org', 'What is your email address?'),
+            createHeaderField('Name', 'Adrienne Dreyfus', 'What is your name?', {isActive: true}),
+            createHeaderField('Address', '3099 Washington st', 'What is your address?'),
+            createHeaderField('City', 'San Francisco, CA', 'What is your city?'),
+            createHeaderField('Email', 'adrienne@codeforamerica.org', 'What is your email address?'),
             createResumeField('Objective', 'To get better at work', "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
             createSimpleList('Skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: [{value:'cooking'}, {value:'coding'}], isSimpleList: true}}),
             createRichList('Education', "What education do you have?", {listFields: [{key: 'header', value: 'School name'}, {key:'dates', value: 'Years attended'}, {key:'values',value:'Things you did', isList: true}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}}),
-            createRichList('Professional Experience', "What work experience do you have?", {listFields: [{key: 'header', value: 'Title, Place of Work'}, {key:'dates', value: 'Years worked there'}, {key:'values',value:'Things you did', isList: true}],label: 'Add work experience:', header: 'Professional Experience', list: {values: [{header: 'Code for America', dates:'Feb 01 2017 - Oct 27 2017', values:[{value: 'Wrote some code'}, {value: 'Had fun'}]}]}})
+            createRichList('Work', "What work experience do you have?", {listFields: [{key: 'header', value: 'Title, Place of Work'}, {key:'dates', value: 'Years worked there'}, {key:'values',value:'Things you did', isList: true}],label: 'Add work experience:', header: 'Professional Experience', list: {values: [{header: 'Code for America', dates:'Feb 01 2017 - Oct 27 2017', values:[{value: 'Wrote some code'}, {value: 'Had fun'}]}]}})
         ],
         done: false,
         activeIndex: 0,
@@ -241,8 +241,9 @@ var app = new Vue({
     },
     methods: {
         nextButtonClicked: function (event) {
+            var index = $(event.target).data('id');
             var activeIndex = this.activeIndex,
-                newActiveIndex = activeIndex + 1;
+                newActiveIndex = index || activeIndex + 1;
 
             this.resume[activeIndex].isActive = false;
             this.resume[newActiveIndex].isActive = true;
