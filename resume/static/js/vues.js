@@ -44,7 +44,7 @@ Vue.component('simple-list-item', {
     template:   '<li class="item" v-on:hover="onHover">' +
                 '<span v-if="!isEditing">{{item}}</span>' +
                 '<input v-model="item" v-if="isEditing">' +
-                '<button class="btn btn-base-alt" v-if="isEditing" v-on:click="updateItem">Save</button>' +
+                '<button class="btn btn-base-alt float-right" v-if="isEditing" v-on:click="updateItem">Save</button>' +
                 '<span class="icons float-right" v-if="!isEditing">' +
                     '<i class="fa fa-pencil-square-o" aria-hidden="true" v-on:click="editItem" tabindex="0" @keyup.enter="editItem"></i>' +
                     '<i class="fa fa-times" aria-hidden="true" v-on:click="removeItem" tabindex="0" @keyup.enter="removeItem"></i></span>' +
