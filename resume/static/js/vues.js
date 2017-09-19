@@ -42,73 +42,44 @@ Vue.component('double-col', {
     methods: {
         editItem: function () {
             this.$emit('update:field', this.colData);
-        }
-    }
-});
-
-Vue.component('paragraph', {
-    props: ['data'],
-    delimiters: ["[", "]"],
-    data: function () {
-        return {
-            colData: this.data
-        }
-    },
-    template: '#paragraph',
-    methods: {
-        editItem: function () {
-            this.$emit('update:data', this.colData);
-        }
-    }
-});
-
-Vue.component('field', {
-    props: ['item', 'data', 'isEditing', 'isSubItem'],
-    delimiters: ["[", "]"],
-    data: function () {
-        return {
-            colData: this.item.data,
-            isEditing: this.isEditing
-        }
-    },
-    template: '#field',
-    methods: {
-        editItem: function () {
-            this.$emit('update:data', this.colData);
         },
-        update: function (newField) {
-            this.$emit('update:data', newField)
+        toggleEdit: function (evt) {
+            console.log('evt', evt)
+        },
+        update: function (oldItem, newItem) {
+            console.log('old', oldItem)
+        }
+    }
+});
+
+
+Vue.component('field-set', {
+    props: ['item', 'enableEditing'],
+    delimiters: ["[", "]"],
+    data: function () {
+        return {
+            isEditing: this.enableEditing
+        }
+    },
+    template: '#field-set',
+    methods: {
+        update: function () {
+            this.isEditing = false;
+            this.$emit('update:enableEditing', this.isEditing);
         },
         toggleEdit: function () {
             this.isEditing = true;
+            this.$emit('update:enableEditing', this.isEditing);
         }
     }
 });
 
-Vue.component('simple-list-preview', {
-    props: ['list'],
-    template: '<div class="resume-list">' +
-        '<ul id="example-1"><li v-for="data in list">{{ data.value }}</li></ul>' +
-        '</div>'
-});
-
-Vue.component('rich-list-preview', {
-    props: ['list'],
-    template: '<div class="resume-list">' +
-        '<div v-for="item in list" class="rich-list-preview">' +
-        '<h4 class="preview-rich-list-header" v-if="item.header">{{item.header}}</h4>' +
-        '<h5 class="preview-rich-list-header" v-if="item.dates">{{item.dates}}</h5>' +
-        '<ul v-if="item.values" id="example-1"><li v-for="data in item.values">{{ data.value }}</li></ul>' +
-        '</div>'+
-        '</div>'
-});
-
 Vue.component('simple-list-item', {
-    props: ['value'],
+    props: ['value', 'enableEdit', 'hideAdd'],
     data: function () {
       return {
           hasHover: false,
-          isEditing: false,
+          isEditing: this.enableEdit,
           item: this.value
       }
     },
@@ -116,7 +87,7 @@ Vue.component('simple-list-item', {
                 '<span v-if="!isEditing">{{item}}</span>' +
                 '<input v-model="item" v-if="isEditing">' +
                 '<button class="btn btn-base-alt float-right" v-if="isEditing" v-on:click="updateItem">Save</button>' +
-                '<span class="icons float-right" v-if="!isEditing">' +
+                '<span class="icons float-right" v-if="!isEditing && !hideAdd">' +
                     '<i class="fa fa-pencil-square-o" aria-hidden="true" v-on:click="editItem" tabindex="0" @keyup.enter="editItem"></i>' +
                     '<i class="fa fa-times" aria-hidden="true" v-on:click="removeItem" tabindex="0" @keyup.enter="removeItem"></i></span>' +
                 '</li>',
@@ -139,11 +110,12 @@ Vue.component('simple-list-item', {
 });
 
 Vue.component('list', {
-    props: ['values', 'id'],
+    props: ['values', 'id', 'enableEdit', 'hideAdd'],
     data: function () {
         return {
             newItem: '',
-            items: this.values || []
+            items: this.values || [],
+            isEditing: this.enableEdit
         }
     },
     mounted: function () {
@@ -160,8 +132,8 @@ Vue.component('list', {
         }
     },
     template: '<div class="list">' +
-    '<ul><simple-list-item :value.sync="data" v-for="(data, i) in items" :key="i" v-on:remove="removeFromList" v-on:update="updateList"></simple-list-item><li><input v-model="newItem" @keyup.enter="addToList" class="newItemInput"/>' +
-    '<button class="btn btn-base-alt float-right" v-on:click="addToList">Add</button>' +
+    '<ul><simple-list-item :value.sync="data" v-for="(data, i) in items" :enable-edit="isEditing" :hide-add="hideAdd" :key="i" v-on:remove="removeFromList" v-on:update="updateList"></simple-list-item><li v-if="!hideAdd"><input v-model="newItem" @keyup.enter="addToList" class="newItemInput"/>' +
+    '<button class="btn btn-base-alt float-right" v-on:click="addToList" v-if="!hideAdd">Add</button>' +
     '</li></ul>' +
     '</div>',
     methods: {
@@ -190,55 +162,6 @@ Vue.component('list', {
         }
     }
 });
-
-Vue.component('rich-list-item', {
-    props: ['value'],
-    delimiters: ["[", "]"],
-    template: '#rich-list-item',
-    data: function () {
-        return {
-            isEditing: false,
-            newListItem: ''
-        }
-    },
-    methods: {
-        edit: function (evt) {
-            this.isEditing = true;
-        },
-        save: function (evt) {
-            this.isEditing = false;
-        },
-        add: function (evt) {
-            this.value.values.push({value: this.newListItem});
-            this.newListItem = '';
-        }
-    }
-});
-
-var createRichList = function (id, header, opts) {
-    if(!opts) opts = {};
-    return {
-        id: id,
-        header: opts.header || '',
-        isActive: opts.isActive || false,
-        list: opts.list || null,
-        listFields: opts.listFields || null,
-        label: opts.label || '',
-        isRichList: true,
-        previewHeader: opts.header || '',
-
-        serialize: function () {
-            return {
-                id: this.id,
-                type: 'double-col',
-                data: {
-                    header: this.header,
-                    values: this.list.values
-                }
-            }
-        }
-    }
-};
 
 var createSingleCol = function (id, data, header, opts) {
     if(!opts) opts = {};
@@ -278,9 +201,9 @@ var createDoubleCol = function (id, data, header, opts) {
                 type: 'double-col',
                 data: {
                     header: this.previewHeader,
-                    values: _.map(this.data, function (item) {
+                    values: _.flatten(_.map(this.data, function (item) {
                        return item.serialize()
-                    })
+                    }))
                 }
             };
         }
@@ -296,7 +219,7 @@ var createField = function (type, data, id, label) {
         isField: type === 'field',
         data: data,
         label: label || '',
-        isEditing: true,
+        isEditing: false,
 
         serialize: function () {
             return {
@@ -310,7 +233,14 @@ var createField = function (type, data, id, label) {
 var createFieldSet = function (fields) {
     return {
         fields: fields,
-        isFieldSet: true
+        isFieldSet: true,
+        isEditing: false,
+        
+        serialize: function () {
+            return _.map(this.fields, function (field) {
+                return field.serialize()
+            });
+        }
     }
 };
 
@@ -325,8 +255,8 @@ var app = new Vue({
             createSingleCol('Email', 'adrienne@codeforamerica.org', 'What is your email address?'),
             createDoubleCol('Objective', [createField('paragraph', 'Test')], "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
             createDoubleCol('Skills', [createField('list', ['cooking', 'cleaning'])] ,"What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: [{value:'cooking'}, {value:'coding'}], isSimpleList: true}}),
-            createDoubleCol('Education', [createFieldSet([createField('field', 'School Name'), createField('field', 'Dates attended'), createField('list', ['Learned']) ])], "What education do you have?", {fieldTypes: [{key: 'header', label: 'School name', type: 'field'}, {key:'dates', label: 'Years attended', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}}),
-            createRichList('Work', "What work experience do you have?", {listFields: [{key: 'header', value: 'Title, Place of Work'}, {key:'dates', value: 'Years worked there'}, {key:'values',value:'Things you did', isList: true}],label: 'Add work experience:', header: 'Professional Experience', list: {values: [{header: 'Code for America', dates:'Feb 01 2017 - Oct 27 2017', values:[{value: 'Wrote some code'}, {value: 'Had fun'}]}]}})
+            createDoubleCol('Education', [createFieldSet([createField('field', 'School Name'), createField('field', 'Dates attended'), createField('list', ['Learned']) ])], "What education do you have?", {fieldTypes: [{key: 'header', label: 'School name', type: 'field'}, {key:'dates', label: 'Years attended', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an education:', header: 'Education'}),
+            createDoubleCol('Work', [createFieldSet([createField('field', 'Work name'), createField('field', 'Dates worked'), createField('list', ['Learned']) ])], "What work have you done?", {fieldTypes: [{key: 'header', label: 'Work name', type: 'field'}, {key:'dates', label: 'Years worked', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an work:', header: 'Work'})
         ],
         activeIndex: 0,
         newListItem: '',

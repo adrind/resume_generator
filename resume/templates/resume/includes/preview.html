@@ -3,9 +3,25 @@
         <h3 class="preview-header" v-if="header">[header]</h3>
         <div v-if="item.isSingleCol" class="data">[item.data]</div>
         <div v-if="item.isDoubleCol" class="data">
-            <span v-for="datum in item.data">[datum.data]</span>
+            <span v-for="datum in item.data">
+                <div class="resume-list" v-if="datum.isList">
+                    <ul>
+                        <li v-for="li in datum.data">[li]</li>
+                    </ul>
+                </div>
+                <p v-if="datum.isTextArea || datum.isField">[datum.data]</p>
+
+                <div class="resume-list" v-if="datum.isFieldSet">
+                    <div class="field" v-for="f in datum.fields">
+                        <div class="resume-list" v-if="f.isList">
+                            <ul>
+                                <li v-for="li in f.data">[li]</li>
+                            </ul>
+                        </div>
+                        <p v-if="f.isTextArea || f.isField">[f.data]</p>
+                    </div>
+                </div>
+            </span>
         </div>
-        <simple-list-preview v-if="item.isSimpleList && item.list" :list="item.list.values"></simple-list-preview>
-        <rich-list-preview v-if="item.isRichList && item.list" :list="item.list.values"></rich-list-preview>
     </div>
 </script>

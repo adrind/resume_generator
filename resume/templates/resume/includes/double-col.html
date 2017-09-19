@@ -2,11 +2,13 @@
     <div class="double-col">
         <h2 class="h2-heading"><strong>[header]</strong></h2>
         <div v-for="item in field">
-            <div class="field-set" v-if="item.isFieldSet">
-                <i v-if="!isSubItem" class="fa fa-pencil-square-o" aria-hidden="true" v-on:click="toggleEdit" tabindex="0" @keyup.enter="toggleEdit"></i>
-                <field v-for="subItem in item.fields" :item="subItem" :data.sync="subItem.data" :is-sub-item="true" :is-editing="false"></field>
+            <field-set v-if="item.isFieldSet" :item="item" :enable-editing.sync="item.isEditing" v-on:update="update"></field-set>
+
+            <div v-else>
+                <input v-if="item.isField" v-model="item.data"/>
+                <textarea v-if="item.isTextArea" v-model="item.data"></textarea>
+                <list v-if="item.isList" :values.sync="item.data" :enableEdit="false"></list>
             </div>
-            <field v-else :item="item" :label="item.label" :data.sync="item.data"></field>
         </div>
     </div>
 </script>

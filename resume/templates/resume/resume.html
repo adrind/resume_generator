@@ -21,12 +21,6 @@
                 <div class="resume-section">
                     <div class="row" v-for="item in resume">
                         <div class="section" v-if="item.isActive" v-bind:class="[item.id]">
-                            <div v-if="item.isSimpleList">
-                                <list :values.sync="item.list.values" :id="item.id" :key="item.id"></list>
-                            </div>
-                            <div v-if="item.isRichList">
-                                {% include 'resume/includes/rich_list.html' %}
-                            </div>
                             <div v-if="item.isSingleCol">
                                 <single-col :data.sync="item.data" :header="item.header" :is-text-area="item.isTextArea"></single-col>
                             </div>
@@ -53,11 +47,10 @@
             </div>
         </div>
     </section>
-    {% include 'resume/includes/rich_list_item.html' %}
     {% include 'resume/includes/preview.html' %}
     {% include 'resume/includes/single-col.html' %}
     {% include 'resume/includes/double-col.html' %}
-    {% include 'resume/includes/field.html' %}
+    {% include 'resume/includes/field-set.html' %}
 {% endblock %}
 
 {% block extra_js %}

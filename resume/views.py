@@ -98,77 +98,25 @@ def create_header_field(canvas, starting_height, body):
 #A resume field is a basic field that spans two columns: a header (left col) and body (right col)
 def create_resume_field(canvas, starting_height, header_text, values):
     first_col = Paragraph(header_text, style=styles['Field-Header'])
-    second_col = ''
+    second_col = []
     for field in values:
-        if field['type'] == 'paragraph':
-            second_col = Paragraph(field['data'], style=style)
+        if field['type'] == 'paragraph' or field['type'] == 'field':
+            second_col.append(Paragraph(field['data'], style=style))
         if field['type'] == 'list':
             bullet_list = []
             for item in field['data']:
                 bullet_list.append(Paragraph(item, style=style))
-            second_col = ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
-                                     bulletFontSize=16, style=list_style)
+            second_col.append(ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
+                                     bulletFontSize=16, style=list_style))
 
     w1, h1 = first_col.wrapOn(canvas, FIRST_COL_WIDTH, MAX_HEIGHT)
-    w2, h2 = second_col.wrapOn(canvas, SECOND_COL_WIDTH, MAX_HEIGHT)
+    first_col.drawOn(canvas, LEFT_MARGIN, starting_height - h1)
 
-    first_col.drawOn(canvas, LEFT_MARGIN, starting_height)
-    second_col.drawOn(canvas, SECOND_COL_START, starting_height)
+    for paragraph in second_col:
+        w2, h2 = paragraph.wrapOn(canvas, SECOND_COL_WIDTH, MAX_HEIGHT)
+        paragraph.drawOn(canvas, SECOND_COL_START, starting_height - h2)
 
-    return starting_height - h1 if h1 > h2 else starting_height - h2
-
-#A list is a simple component with a header (left col) and bullet list (right col)
-def create_list_resume_field(canvas, starting_height, header_text, list_data):
-    header = Paragraph(header_text, style=styles['Field-Header'])
-
-    bullet_list = []
-    for item in list_data:
-        bullet_list.append(Paragraph(item['value'], style=style))
-    list_flow = ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
-        bulletFontSize=16, style=list_style)
-
-    w1, h1 = header.wrapOn(canvas, FIRST_COL_WIDTH, MAX_HEIGHT)
-    w2, h2 = list_flow.wrapOn(canvas, SECOND_COL_WIDTH, LINE_HEIGHT * len(list_data))
-    header.drawOn(canvas, LEFT_MARGIN, starting_height - h1)
-    list_flow.drawOn(canvas, SECOND_COL_START, starting_height - h2)
-
-    return starting_height - h1 if h1 > h2 else starting_height - h2
-
-def create_rich_list_section(section):
-    paragraphs = []
-    if 'header' in section:
-        paragraphs.append(Paragraph(section['header'], style=styles['Rich-List-Header']))
-    if 'dates' in section:
-        paragraphs.append(Paragraph(section['dates'], style=styles['Rich-List-Header']))
-    if 'values' in section:
-        bullet_list = []
-        for skill in section['values']:
-            bullet_list.append(Paragraph(skill['value'], style=style))
-        list_flow = ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
-                                 bulletFontSize=16, style=list_style)
-        paragraphs.append(list_flow)
-
-    if 'body' in section:
-        paragraphs.append(Paragraph(section['body'], style=style))
-
-    return paragraphs
-
-#A rich list has multiple fields
-#A header for the left column, list_data, or body (TODO)
-def create_rich_list(canvas, starting_height, header_text, list_data):
-    header = Paragraph(header_text, style=styles['Field-Header'])
-
-    w1, h1 = header.wrapOn(canvas, FIRST_COL_WIDTH, MAX_HEIGHT)
-    header.drawOn(canvas, LEFT_MARGIN, starting_height - h1)
-
-    for item in list_data:
-        section = create_rich_list_section(item)
-        for paragraph in section:
-            w2, h2 = paragraph.wrapOn(canvas, SECOND_COL_WIDTH, MAX_HEIGHT)
-            paragraph.drawOn(canvas, SECOND_COL_START, starting_height - h2)
-
-            starting_height -= h2
-        starting_height -= SPACER
+        starting_height -= h2
 
     return starting_height
 
@@ -202,9 +150,6 @@ def get_resume(request):
         if field['type'] == 'double-col':
             starting_height -= SPACER
             starting_height = create_resume_field(p, starting_height, field['data']['header'], field['data']['values'])
-        if field['type'] == 'rich-list':
-            starting_height -= SPACER
-            starting_height = create_rich_list(p, starting_height, field['id'], field['value'])
 
     # Close the PDF object cleanly, and we're done.
     p.showPage()
