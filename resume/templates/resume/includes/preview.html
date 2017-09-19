@@ -4,16 +4,16 @@
         <div v-if="item.isSingleCol" class="data">[item.data]</div>
         <div v-if="item.isDoubleCol" class="data">
             <span v-for="datum in item.data">
-                <div class="resume-list" v-if="datum.isList">
+                <div v-if="datum.isList">
                     <ul>
                         <li v-for="li in datum.data">[li]</li>
                     </ul>
                 </div>
                 <p v-if="datum.isTextArea || datum.isField">[datum.data]</p>
 
-                <div class="resume-list" v-if="datum.isFieldSet">
+                <div v-if="datum.isFieldSet">
                     <div class="field" v-for="f in datum.fields">
-                        <div class="resume-list" v-if="f.isList">
+                        <div v-if="f.isList">
                             <ul>
                                 <li v-for="li in f.data">[li]</li>
                             </ul>

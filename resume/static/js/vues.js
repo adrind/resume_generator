@@ -31,14 +31,25 @@ Vue.component('single-col', {
 });
 
 Vue.component('double-col', {
-    props: ['field', 'header', 'fieldSet'],
+    props: ['field', 'header', 'fieldSet', 'fieldTypes'],
     delimiters: ["[", "]"],
     data: function () {
         return {
-            colData: this.field
+            colData: this.field,
+            newItem: {},
+            showFieldTypes: false
         }
     },
     template: '#double-col',
+    mounted: function () {
+        var scope = this;
+      _.each(this.fieldTypes, function (fieldType) {
+        scope.newItem[fieldType.key] = {
+            type: fieldType.type,
+            data: ''
+        }
+      });
+    },
     methods: {
         editItem: function () {
             this.$emit('update:field', this.colData);
@@ -46,8 +57,17 @@ Vue.component('double-col', {
         toggleEdit: function (evt) {
             console.log('evt', evt)
         },
-        update: function (oldItem, newItem) {
-            console.log('old', oldItem)
+        createNewItem: function () {
+            this.showFieldTypes = true;
+        },
+        addNewItem: function () {
+            console.log('new', this.newItem);
+            var fields = [];
+            _.each(this.newItem, function (val, key) {
+                fields.push(createField(val.type, val.data, key));
+            });
+            this.colData.push(createFieldSet(fields));
+            this.showFieldTypes = false;
         }
     }
 });

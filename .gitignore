@@ -1,3 +1,5 @@
+.DS_Store
 .idea
 env3
 resume/tmp/*
+resume/.DS_Store
