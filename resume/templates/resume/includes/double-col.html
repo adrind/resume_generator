@@ -1,0 +1,12 @@
+<script type="text/x-template" id="double-col">
+    <div class="double-col">
+        <h2 class="h2-heading"><strong>[header]</strong></h2>
+        <div v-for="item in field">
+            <div class="field-set" v-if="item.isFieldSet">
+                <i v-if="!isSubItem" class="fa fa-pencil-square-o" aria-hidden="true" v-on:click="toggleEdit" tabindex="0" @keyup.enter="toggleEdit"></i>
+                <field v-for="subItem in item.fields" :item="subItem" :data.sync="subItem.data" :is-sub-item="true" :is-editing="false"></field>
+            </div>
+            <field v-else :item="item" :label="item.label" :data.sync="item.data"></field>
+        </div>
+    </div>
+</script>

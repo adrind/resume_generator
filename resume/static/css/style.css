@@ -218,7 +218,8 @@ p {
 
 /* Rich List */
 
-.rich-list-item {
+.rich-list-item,
+.field-set {
     border: 1px solid #071C49;
     padding: 5px;
     margin-bottom: 10px;

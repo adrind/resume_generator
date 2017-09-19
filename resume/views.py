@@ -96,15 +96,24 @@ def create_header_field(canvas, starting_height, body):
     return starting_height - h1
 
 #A resume field is a basic field that spans two columns: a header (left col) and body (right col)
-def create_resume_field(canvas, starting_height, header_text, body_paragraph):
-    header = Paragraph(header_text, style=styles['Field-Header'])
-    objective = Paragraph(body_paragraph, style=style)
+def create_resume_field(canvas, starting_height, header_text, values):
+    first_col = Paragraph(header_text, style=styles['Field-Header'])
+    second_col = ''
+    for field in values:
+        if field['type'] == 'paragraph':
+            second_col = Paragraph(field['data'], style=style)
+        if field['type'] == 'list':
+            bullet_list = []
+            for item in field['data']:
+                bullet_list.append(Paragraph(item, style=style))
+            second_col = ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
+                                     bulletFontSize=16, style=list_style)
 
-    w1, h1 = header.wrap(FIRST_COL_WIDTH, MAX_HEIGHT)
-    w2, h2 = objective.wrap(SECOND_COL_WIDTH, MAX_HEIGHT)
+    w1, h1 = first_col.wrapOn(canvas, FIRST_COL_WIDTH, MAX_HEIGHT)
+    w2, h2 = second_col.wrapOn(canvas, SECOND_COL_WIDTH, MAX_HEIGHT)
 
-    header.drawOn(canvas, LEFT_MARGIN, starting_height)
-    objective.drawOn(canvas, SECOND_COL_START, starting_height)
+    first_col.drawOn(canvas, LEFT_MARGIN, starting_height)
+    second_col.drawOn(canvas, SECOND_COL_START, starting_height)
 
     return starting_height - h1 if h1 > h2 else starting_height - h2
 
@@ -188,14 +197,11 @@ def get_resume(request):
     starting_height = TOP_MARGIN
 
     for field in data:
-        if field['type'] == 'header':
-            starting_height = create_header_field(p, starting_height, field['value'])
-        if field['type'] == 'field':
+        if field['type'] == 'single-col':
+            starting_height = create_header_field(p, starting_height, field['data'])
+        if field['type'] == 'double-col':
             starting_height -= SPACER
-            starting_height = create_resume_field(p, starting_height, field['id'], field['value'])
-        if field['type'] == 'list':
-            starting_height -= SPACER
-            starting_height = create_list_resume_field(p, starting_height, field['id'], field['value'])
+            starting_height = create_resume_field(p, starting_height, field['data']['header'], field['data']['values'])
         if field['type'] == 'rich-list':
             starting_height -= SPACER
             starting_height = create_rich_list(p, starting_height, field['id'], field['value'])

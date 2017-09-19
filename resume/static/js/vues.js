@@ -14,6 +14,77 @@ Vue.component('preview-field', {
     template: '#preview-item'
 });
 
+Vue.component('single-col', {
+    props: ['data', 'header', 'isTextArea'],
+    delimiters: ["[", "]"],
+    data: function () {
+        return {
+            colData: this.data
+        }
+    },
+    template: '#single-col',
+    methods: {
+        editItem: function () {
+            this.$emit('update:data', this.colData);
+        }
+    }
+});
+
+Vue.component('double-col', {
+    props: ['field', 'header', 'fieldSet'],
+    delimiters: ["[", "]"],
+    data: function () {
+        return {
+            colData: this.field
+        }
+    },
+    template: '#double-col',
+    methods: {
+        editItem: function () {
+            this.$emit('update:field', this.colData);
+        }
+    }
+});
+
+Vue.component('paragraph', {
+    props: ['data'],
+    delimiters: ["[", "]"],
+    data: function () {
+        return {
+            colData: this.data
+        }
+    },
+    template: '#paragraph',
+    methods: {
+        editItem: function () {
+            this.$emit('update:data', this.colData);
+        }
+    }
+});
+
+Vue.component('field', {
+    props: ['item', 'data', 'isEditing', 'isSubItem'],
+    delimiters: ["[", "]"],
+    data: function () {
+        return {
+            colData: this.item.data,
+            isEditing: this.isEditing
+        }
+    },
+    template: '#field',
+    methods: {
+        editItem: function () {
+            this.$emit('update:data', this.colData);
+        },
+        update: function (newField) {
+            this.$emit('update:data', newField)
+        },
+        toggleEdit: function () {
+            this.isEditing = true;
+        }
+    }
+});
+
 Vue.component('simple-list-preview', {
     props: ['list'],
     template: '<div class="resume-list">' +
@@ -62,6 +133,7 @@ Vue.component('simple-list-item', {
         updateItem: function () {
             this.isEditing = false;
             this.$emit('update:value', this.item);
+            this.$emit('update', this.value, this.item);
         }
     }
 });
@@ -88,17 +160,25 @@ Vue.component('list', {
         }
     },
     template: '<div class="list">' +
-    '<ul><simple-list-item :value.sync="data.value" v-for="(data, i) in items" :key="i" v-on:remove="removeFromList"></simple-list-item><li><input v-model="newItem" @keyup.enter="addToList" class="newItemInput"/>' +
+    '<ul><simple-list-item :value.sync="data" v-for="(data, i) in items" :key="i" v-on:remove="removeFromList" v-on:update="updateList"></simple-list-item><li><input v-model="newItem" @keyup.enter="addToList" class="newItemInput"/>' +
     '<button class="btn btn-base-alt float-right" v-on:click="addToList">Add</button>' +
     '</li></ul>' +
     '</div>',
     methods: {
         addToList: function () {
             if(this.newItem) {
-                this.items.push({value: this.newItem});
+                this.items.push(this.newItem);
                 this.newItem = '';
                 this.$emit('update:values', this.items);
             }
+        },
+        updateList: function (oldVal, newVal) {
+            this.items = _.each(this.items, function (item, i, items) {
+                if(item === oldVal) {
+                    items[i] = newVal
+                }
+            });
+            this.$emit('update:values', this.items);
         },
         removeFromList: function (value) {
             if(value) {
@@ -135,27 +215,6 @@ Vue.component('rich-list-item', {
     }
 });
 
-var createSimpleList = function (id, header, opts) {
-    if(!opts) opts = {};
-    return {
-        id: id,
-        header: opts.header || '',
-        isActive: opts.isActive || false,
-        list: opts.list || null,
-        label: opts.label || '',
-        isSimpleList: true,
-        previewHeader: opts.header || '',
-
-        serialize: function () {
-            return {
-                id: this.id,
-                type: 'list',
-                value: this.list.values
-            };
-        }
-    }
-};
-
 var createRichList = function (id, header, opts) {
     if(!opts) opts = {};
     return {
@@ -171,34 +230,37 @@ var createRichList = function (id, header, opts) {
         serialize: function () {
             return {
                 id: this.id,
-                type: 'rich-list',
-                value: this.list.values
+                type: 'double-col',
+                data: {
+                    header: this.header,
+                    values: this.list.values
+                }
             }
         }
     }
 };
 
-var createHeaderField = function (id, data, header, opts) {
+var createSingleCol = function (id, data, header, opts) {
     if(!opts) opts = {};
     return {
         id: id,
         data: data,
         isActive: opts.isActive || false,
-        isField: true,
+        isSingleCol: true,
         header: header,
 
         serialize: function () {
             return {
                 id: this.id,
-                type: 'header',
-                value: this.data
+                type: 'single-col',
+                data: this.data
             };
         }
     }
 };
 
 
-var createResumeField = function (id, data, header, opts) {
+var createDoubleCol = function (id, data, header, opts) {
     if(!opts) opts = {};
     return {
         id: id,
@@ -207,15 +269,48 @@ var createResumeField = function (id, data, header, opts) {
         isActive: opts.isActive || false,
         isTextArea: opts.isTextArea || false,
         previewHeader: opts.header || '',
-        isField: true,
-        
+        isDoubleCol: true,
+        fieldTypes: opts.fieldTypes,
+
         serialize: function () {
             return {
                 id: this.id,
-                type: 'field',
-                value: this.data
+                type: 'double-col',
+                data: {
+                    header: this.previewHeader,
+                    values: _.map(this.data, function (item) {
+                       return item.serialize()
+                    })
+                }
             };
         }
+    }
+};
+
+var createField = function (type, data, id, label) {
+    return {
+        type: type,
+        id: id,
+        isTextArea: type === 'paragraph',
+        isList: type === 'list',
+        isField: type === 'field',
+        data: data,
+        label: label || '',
+        isEditing: true,
+
+        serialize: function () {
+            return {
+                type: this.type,
+                data: this.data
+            }
+        }
+    }
+};
+
+var createFieldSet = function (fields) {
+    return {
+        fields: fields,
+        isFieldSet: true
     }
 };
 
@@ -224,13 +319,13 @@ var app = new Vue({
     el: '#resume-preview',
     data: {
         resume: [
-            createHeaderField('Name', 'Adrienne Dreyfus', 'What is your name?', {isActive: true}),
-            createHeaderField('Address', '3099 Washington st', 'What is your address?'),
-            createHeaderField('City', 'San Francisco, CA', 'What is your city?'),
-            createHeaderField('Email', 'adrienne@codeforamerica.org', 'What is your email address?'),
-            createResumeField('Objective', 'To get better at work', "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
-            createSimpleList('Skills', "What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: [{value:'cooking'}, {value:'coding'}], isSimpleList: true}}),
-            createRichList('Education', "What education do you have?", {listFields: [{key: 'header', value: 'School name'}, {key:'dates', value: 'Years attended'}, {key:'values',value:'Things you did', isList: true}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}}),
+            createSingleCol('Name', 'Adrienne Dreyfus', 'What is your name?', {isActive: true}),
+            createSingleCol('Address', '3099 Washington st', 'What is your address?'),
+            createSingleCol('City', 'San Francisco, CA', 'What is your city?'),
+            createSingleCol('Email', 'adrienne@codeforamerica.org', 'What is your email address?'),
+            createDoubleCol('Objective', [createField('paragraph', 'Test')], "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
+            createDoubleCol('Skills', [createField('list', ['cooking', 'cleaning'])] ,"What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: [{value:'cooking'}, {value:'coding'}], isSimpleList: true}}),
+            createDoubleCol('Education', [createFieldSet([createField('field', 'School Name'), createField('field', 'Dates attended'), createField('list', ['Learned']) ])], "What education do you have?", {fieldTypes: [{key: 'header', label: 'School name', type: 'field'}, {key:'dates', label: 'Years attended', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an education:', header: 'Education', list: {values: [{header: 'Tufts', dates:'2009-2013', values:[{value: 'Graduated with degree'}, {value: 'Had fun'}]}]}}),
             createRichList('Work', "What work experience do you have?", {listFields: [{key: 'header', value: 'Title, Place of Work'}, {key:'dates', value: 'Years worked there'}, {key:'values',value:'Things you did', isList: true}],label: 'Add work experience:', header: 'Professional Experience', list: {values: [{header: 'Code for America', dates:'Feb 01 2017 - Oct 27 2017', values:[{value: 'Wrote some code'}, {value: 'Had fun'}]}]}})
         ],
         activeIndex: 0,

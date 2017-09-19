@@ -1,0 +1,7 @@
+<script type="text/x-template" id="single-col">
+    <div class="single-col">
+        <h2 class="h2-heading"><strong>[header]</strong></h2>
+        <textarea v-if="isTextArea" v-model="colData" v-on:keyup="editItem"></textarea>
+        <input v-else v-model="colData" v-on:keyup="editItem"/>
+    </div>
+</script>

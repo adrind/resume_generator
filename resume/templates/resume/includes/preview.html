@@ -1,7 +1,10 @@
 <script type="text/x-template" id="preview-item">
     <div class="preview-item">
         <h3 class="preview-header" v-if="header">[header]</h3>
-        <div v-if="item.data" class="data">[item.data]</div>
+        <div v-if="item.isSingleCol" class="data">[item.data]</div>
+        <div v-if="item.isDoubleCol" class="data">
+            <span v-for="datum in item.data">[datum.data]</span>
+        </div>
         <simple-list-preview v-if="item.isSimpleList && item.list" :list="item.list.values"></simple-list-preview>
         <rich-list-preview v-if="item.isRichList && item.list" :list="item.list.values"></rich-list-preview>
     </div>
