@@ -155,7 +155,7 @@ Vue.component('list', {
         updateList: function (oldVal, newVal) {
             this.items = _.each(this.items, function (item, i, items) {
                 if(item === oldVal) {
-                    items[i] = newVal
+                    Vue.set(items, i, newVal);
                 }
             });
             this.$emit('update:values', this.items);
