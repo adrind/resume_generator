@@ -102,6 +102,8 @@ def create_resume_field(canvas, starting_height, header_text, values):
     for field in values:
         if field['type'] == 'paragraph' or field['type'] == 'field':
             second_col.append(Paragraph(field['data'], style=style))
+        if field['type'] == 'spacer':
+            second_col.append(field);
         if field['type'] == 'list':
             bullet_list = []
             for item in field['data']:
@@ -113,10 +115,13 @@ def create_resume_field(canvas, starting_height, header_text, values):
     first_col.drawOn(canvas, LEFT_MARGIN, starting_height - h1)
 
     for paragraph in second_col:
-        w2, h2 = paragraph.wrapOn(canvas, SECOND_COL_WIDTH, MAX_HEIGHT)
-        paragraph.drawOn(canvas, SECOND_COL_START, starting_height - h2)
-
-        starting_height -= h2
+        if type(paragraph) is dict:
+            #then we know it's just a spacer
+            starting_height -= paragraph['data']
+        else:
+            w2, h2 = paragraph.wrapOn(canvas, SECOND_COL_WIDTH, MAX_HEIGHT)
+            paragraph.drawOn(canvas, SECOND_COL_START, starting_height - h2)
+            starting_height -= h2
 
     return starting_height
 

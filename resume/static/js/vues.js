@@ -60,8 +60,10 @@ Vue.component('double-col', {
             this.showFieldTypes = true;
         },
         addNewItem: function () {
-            console.log('new', this.newItem);
             var fields = [];
+            if(this.colData.length) {
+                fields.push(createSpacer());
+            }
             _.each(this.newItem, function (val, key) {
                 fields.push(createField(val.type, val.data, key));
             });
@@ -190,7 +192,6 @@ var createSingleCol = function (id, data, header, opts) {
     }
 };
 
-
 var createDoubleCol = function (id, data, header, opts) {
     if(!opts) opts = {};
     return {
@@ -248,6 +249,20 @@ var createFieldSet = function (fields) {
             return _.map(this.fields, function (field) {
                 return field.serialize()
             });
+        }
+    }
+};
+
+var createSpacer = function (px) {
+    return {
+        type: 'spacer',
+        data: px || 20,
+
+        serialize: function () {
+            return {
+                type: this.type,
+                data: this.data
+            }
         }
     }
 };
