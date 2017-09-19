@@ -257,10 +257,10 @@ var app = new Vue({
     el: '#resume-preview',
     data: {
         resume: [
-            createSingleCol('Name', 'Adrienne Dreyfus', 'What is your name?', {isActive: true}),
-            createSingleCol('Address', '3099 Washington st', 'What is your address?'),
-            createSingleCol('City', 'San Francisco, CA', 'What is your city?'),
-            createSingleCol('Email', 'adrienne@codeforamerica.org', 'What is your email address?'),
+            createSingleCol('Name', 'Bob Jones', 'What is your name?', {isActive: true}),
+            createSingleCol('Address', '1234 Alaska st', 'What is your address?'),
+            createSingleCol('City', 'Anchorage, AK', 'What is your city?'),
+            createSingleCol('Email', 'me@email.com', 'What is your email address?'),
             createDoubleCol('Objective', [createField('paragraph', 'Test')], "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
             createDoubleCol('Skills', [createField('list', ['cooking', 'cleaning'])] ,"What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: [{value:'cooking'}, {value:'coding'}], isSimpleList: true}}),
             createDoubleCol('Education', [createFieldSet([createField('field', 'School Name'), createField('field', 'Dates attended'), createField('list', ['Learned']) ])], "What education do you have?", {fieldTypes: [{key: 'header', label: 'School name', type: 'field'}, {key:'dates', label: 'Years attended', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an education:', header: 'Education'}),
