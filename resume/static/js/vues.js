@@ -7,7 +7,6 @@ var skillsBloodhound = new Bloodhound({
     }
 });
 
-
 Vue.component('preview-field', {
     props: ['item', 'header'],
     delimiters: ["[", "]"],
@@ -72,7 +71,6 @@ Vue.component('double-col', {
     }
 });
 
-
 Vue.component('field-set', {
     props: ['item', 'enableEditing'],
     delimiters: ["[", "]"],
@@ -94,8 +92,9 @@ Vue.component('field-set', {
     }
 });
 
-Vue.component('simple-list-item', {
+Vue.component('list-item', {
     props: ['value', 'enableEdit', 'hideAdd'],
+    delimiters: ["[", "]"],
     data: function () {
       return {
           hasHover: false,
@@ -103,14 +102,7 @@ Vue.component('simple-list-item', {
           item: this.value
       }
     },
-    template:   '<li class="item" v-on:hover="onHover">' +
-                '<span v-if="!isEditing">{{item}}</span>' +
-                '<input v-model="item" v-if="isEditing">' +
-                '<button class="btn btn-base-alt float-right" v-if="isEditing" v-on:click="updateItem">Save</button>' +
-                '<span class="icons float-right" v-if="!isEditing && !hideAdd">' +
-                    '<i class="fa fa-pencil-square-o" aria-hidden="true" v-on:click="editItem" tabindex="0" @keyup.enter="editItem"></i>' +
-                    '<i class="fa fa-times" aria-hidden="true" v-on:click="removeItem" tabindex="0" @keyup.enter="removeItem"></i></span>' +
-                '</li>',
+    template: '#list-item',
     methods: {
         onHover: function () {
             this.hasHover.toggle()
@@ -151,11 +143,7 @@ Vue.component('list', {
             });
         }
     },
-    template: '<div class="list">' +
-    '<ul><simple-list-item :value.sync="data" v-for="(data, i) in items" :enable-edit="isEditing" :hide-add="hideAdd" :key="i" v-on:remove="removeFromList" v-on:update="updateList"></simple-list-item><li v-if="!hideAdd"><input v-model="newItem" @keyup.enter="addToList" class="newItemInput"/>' +
-    '<button class="btn btn-base-alt float-right" v-on:click="addToList" v-if="!hideAdd">Add</button>' +
-    '</li></ul>' +
-    '</div>',
+    template: '#list',
     methods: {
         addToList: function () {
             if(this.newItem) {

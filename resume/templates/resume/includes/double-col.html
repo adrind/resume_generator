@@ -5,11 +5,11 @@
             <field-set v-if="item.isFieldSet" :item="item" :enable-editing.sync="item.isEditing"></field-set>
             <div v-if="fieldTypes" class="newItem">
                 <div v-for="fieldType in fieldTypes" v-if="showFieldTypes">
-                    <label v-if="fieldType.type === 'field'">
+                    <label v-if="fieldType.type === 'field'" class="field-label">
                         [fieldType.label]
                         <input v-model="newItem[fieldType.key].data"/>
                     </label>
-                    <label v-if="fieldType.type === 'list'">
+                    <label v-if="fieldType.type === 'list'" class="list-label">
                         [fieldType.label]
                         <list :values.sync="newItem[fieldType.key].data"></list>
                     </label>

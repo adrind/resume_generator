@@ -5,20 +5,19 @@
         <div v-if="item.isDoubleCol" class="data">
             <span v-for="datum in item.data">
                 <div v-if="datum.isList">
-                    <ul>
+                    <ul class="preview-list">
                         <li v-for="li in datum.data">[li]</li>
                     </ul>
                 </div>
-                <p v-if="datum.isTextArea || datum.isField">[datum.data]</p>
-
+                <span v-if="datum.isTextArea || datum.isField">[datum.data]</span>
                 <div v-if="datum.isFieldSet">
                     <div class="field" v-for="f in datum.fields">
                         <div v-if="f.isList">
-                            <ul>
+                            <ul class="preview-list">
                                 <li v-for="li in f.data">[li]</li>
                             </ul>
                         </div>
-                        <p v-if="f.isTextArea || f.isField">[f.data]</p>
+                        <span v-if="f.isTextArea || f.isField">[f.data]</span>
                     </div>
                 </div>
             </span>
