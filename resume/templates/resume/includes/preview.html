@@ -3,20 +3,16 @@
         <h3 class="preview-header" v-if="header">[header]</h3>
         <div v-if="item.isSingleCol" class="data">[item.data]</div>
         <div v-if="item.isDoubleCol" class="data">
-            <span v-for="datum in item.data">
-                <div v-if="datum.isList">
-                    <ul class="preview-list">
-                        <li v-for="li in datum.data">[li]</li>
-                    </ul>
-                </div>
-                <span v-if="datum.isTextArea || datum.isField">[datum.data]</span>
-                <div v-if="datum.isFieldSet">
-                    <div class="field" v-for="f in datum.fields">
-                        <div v-if="f.isList">
-                            <ul class="preview-list">
-                                <li v-for="li in f.data">[li]</li>
-                            </ul>
-                        </div>
+            <span v-for="field in item.data">
+                <ul class="preview-list" v-if="field.isList">
+                    <li v-for="li in field.data">[li]</li>
+                </ul>
+                <span v-if="field.isTextArea || field.isField">[field.data]</span>
+                <div v-if="field.isFieldSet">
+                    <div class="field" v-for="f in field.fields">
+                        <ul class="preview-list" v-if="f.isList">
+                            <li v-for="li in f.data">[li]</li>
+                        </ul>
                         <span v-if="f.isTextArea || f.isField">[f.data]</span>
                     </div>
                 </div>

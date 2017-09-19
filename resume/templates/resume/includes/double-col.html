@@ -18,14 +18,14 @@
             <div v-else>
                 <input v-if="item.isField" v-model="item.data"/>
                 <textarea v-if="item.isTextArea" v-model="item.data"></textarea>
-                <list v-if="item.isList" :values.sync="item.data" :enableEdit="false"></list>
+                <list v-if="item.isList" :values.sync="item.data" :enableEdit="false" :has-autocomplete="item.hasAutocomplete"></list>
             </div>
         </div>
         <div v-if="showFieldTypes">
-            <button class="btn-base btn-base-alt" v-on:click="addNewItem">Add new</button>
+            <button class="btn btn-base-alt" v-on:click="addNewItem">Add new</button>
         </div>
         <div v-if="fieldTypes && !showFieldTypes">
-            <button class="btn-base btn-base-alt" v-on:click="createNewItem">Create</button>
+            <button class="btn btn-base-alt" v-on:click="createNewItem">Create new [field.id]</button>
         </div>
     </div>
 </script>

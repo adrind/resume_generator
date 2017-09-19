@@ -124,7 +124,7 @@ Vue.component('list-item', {
 });
 
 Vue.component('list', {
-    props: ['values', 'id', 'enableEdit', 'hideAdd'],
+    props: ['values', 'id', 'enableEdit', 'hideAdd', 'hasAutocomplete'],
     data: function () {
         return {
             newItem: '',
@@ -134,8 +134,8 @@ Vue.component('list', {
     },
     mounted: function () {
         var scope = this;
-        if(this.id === 'Skills') {
-            $('.'+this.id+ ' .newItemInput').typeahead(null, {
+        if(this.hasAutocomplete) {
+            $('.newItemInput').typeahead(null, {
                 name: 'new-skill',
                 display: 'normalized_skill_name',
                 source: skillsBloodhound
@@ -165,7 +165,7 @@ Vue.component('list', {
         removeFromList: function (value) {
             if(value) {
                 this.items = _.reject(this.items, function (item) {
-                    return value === item.value;
+                    return value === item;
                 });
                 this.$emit('update:values', this.items);
             }
@@ -200,7 +200,7 @@ var createDoubleCol = function (id, data, header, opts) {
         header: header,
         isActive: opts.isActive || false,
         isTextArea: opts.isTextArea || false,
-        previewHeader: opts.header || '',
+        previewHeader: opts.previewHeader || '',
         isDoubleCol: true,
         fieldTypes: opts.fieldTypes,
 
@@ -219,7 +219,8 @@ var createDoubleCol = function (id, data, header, opts) {
     }
 };
 
-var createField = function (type, data, id, label) {
+var createField = function (type, data, id, label, opts) {
+    if(!opts) {opts = {}};
     return {
         type: type,
         id: id,
@@ -229,6 +230,7 @@ var createField = function (type, data, id, label) {
         data: data,
         label: label || '',
         isEditing: false,
+        hasAutocomplete: opts.hasAutocomplete,
 
         serialize: function () {
             return {
@@ -276,10 +278,10 @@ var app = new Vue({
             createSingleCol('Address', '1234 Alaska st', 'What is your address?'),
             createSingleCol('City', 'Anchorage, AK', 'What is your city?'),
             createSingleCol('Email', 'me@email.com', 'What is your email address?'),
-            createDoubleCol('Objective', [createField('paragraph', 'Test')], "What's your goal? What do you want to learn during your next job?", {isTextArea: true, header: 'Objective'}),
-            createDoubleCol('Skills', [createField('list', ['cooking', 'cleaning'])] ,"What skills do you have?", {label: 'Add a skill:', header: 'Skills', list: {values: [{value:'cooking'}, {value:'coding'}], isSimpleList: true}}),
-            createDoubleCol('Education', [createFieldSet([createField('field', 'School Name'), createField('field', 'Dates attended'), createField('list', ['Learned']) ])], "What education do you have?", {fieldTypes: [{key: 'header', label: 'School name', type: 'field'}, {key:'dates', label: 'Years attended', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an education:', header: 'Education'}),
-            createDoubleCol('Work', [createFieldSet([createField('field', 'Work name'), createField('field', 'Dates worked'), createField('list', ['Learned']) ])], "What work have you done?", {fieldTypes: [{key: 'header', label: 'Work name', type: 'field'}, {key:'dates', label: 'Years worked', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an work:', header: 'Work'})
+            createDoubleCol('Objective', [createField('paragraph', 'Test')], "What's your goal? What do you want to learn during your next job?", {previewHeader: 'Objective'}),
+            createDoubleCol('Skills', [createField('list', ['cooking', 'eating'], 'skills', 'Add a skill', {hasAutocomplete:true})], "What skills do you have?", {previewHeader: 'Skills'}),
+            createDoubleCol('Education', [createFieldSet([createField('field', 'School Name'), createField('field', 'August 2001 - May 2005'), createField('list', ['Graduated Summa Cum Laude']) ])], "What education do you have?", {fieldTypes: [{key: 'header', label: 'School name', type: 'field'}, {key:'dates', label: 'Years attended', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an education:', previewHeader: 'Education'}),
+            createDoubleCol('Work', [createFieldSet([createField('field', 'Work name'), createField('field', 'Dates worked'), createField('list', ['Learned']) ])], "What work have you done?", {fieldTypes: [{key: 'header', label: 'Work name', type: 'field'}, {key:'dates', label: 'Years worked', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an work:', previewHeader: 'Work'})
         ],
         activeIndex: 0,
         newListItem: '',
