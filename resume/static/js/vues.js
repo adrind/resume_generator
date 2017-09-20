@@ -221,9 +221,9 @@ var createDoubleCol = function (id, data, header, opts) {
                 type: 'double-col',
                 data: {
                     header: this.previewHeader,
-                    values: _.flatten(_.map(this.data, function (item) {
+                    values: _.map(this.data, function (item) {
                        return item.serialize()
-                    }))
+                    })
                 }
             };
         }
@@ -247,7 +247,8 @@ var createField = function (id, type, data, opts) {
             return {
                 type: this.type,
                 data: this.data,
-                style: this.style
+                style: this.style,
+                id: this.id
             }
         }
     }
@@ -258,15 +259,18 @@ var createFieldSet = function (fields) {
     _.each(fields, function (field) {
         fieldSet[field.id] = field;
     });
+
     return {
         fields: fieldSet,
         isFieldSet: true,
         isEditing: false,
         
         serialize: function () {
-            return _.map(this.fields, function (field) {
-                return field.serialize()
+            var data = {};
+            _.each(this.fields, function (field) {
+               data[field.id] = field
             });
+            return data;
         }
     }
 };

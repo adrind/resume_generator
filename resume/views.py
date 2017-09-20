@@ -18,13 +18,17 @@ list_style = styles["UnorderedList"]
 # Create your views here.
 WIDTH, HEIGHT = letter
 
-TOP_MARGIN = HEIGHT - 100
-LEFT_MARGIN = 100
+TOP_MARGIN = HEIGHT - 50
+LEFT_MARGIN = 50
+LIST_LEFT_INDENT = 20
 
 FIRST_COL_HEADER = WIDTH/2
+FIRST_COL_START = WIDTH + LEFT_MARGIN
 
 LINE_HEIGHT = 20
 SPACER = 20
+TITLE_SPACER = 10
+
 MAX_HEIGHT = 100
 
 TOP_TABLE_MARGIN = HEIGHT - 200
@@ -33,23 +37,40 @@ FIRST_COL_WIDTH = (WIDTH - LEFT_MARGIN)/5
 SECOND_COL_WIDTH = (WIDTH - LEFT_MARGIN) * 4/5
 SECOND_COL_START = FIRST_COL_WIDTH + LEFT_MARGIN
 
-def create_centered_field(canvas, starting_height, body):
-    return create_header_field(canvas, starting_height, WIDTH, body, styles['Name'])
-def create_left_field(canvas, starting_height, body):
-    return create_header_field(canvas, starting_height, WIDTH + LEFT_MARGIN, body, styles['Normal'])
-def create_right_field(canvas, starting_height, body):
-    return create_header_field(canvas, starting_height, WIDTH + LEFT_MARGIN + FIRST_COL_HEADER, body, styles['Normal'])
+def create_centered_field(canvas, starting_height, body, style):
+    return create_header_field(canvas, starting_height, LEFT_MARGIN, body, style)
+def create_left_field(canvas, starting_height, body, style):
+    return create_header_field(canvas, starting_height, LEFT_MARGIN, body, style)
+def create_right_field(canvas, starting_height, body, style):
+    return create_header_field(canvas, starting_height, 0 - LEFT_MARGIN, body, style)
+
+def create_left_list(canvas, starting_height, body, style):
+    return create_list(canvas, starting_height, WIDTH+LEFT_MARGIN, body, style)
 
 #Header fields are simple fields used at the top of a resume
 def create_header_field(canvas, starting_height, starting_width, body, style):
     field = Paragraph(body, style=style)
     w1, h1 = field.wrap(WIDTH, MAX_HEIGHT)
-    field.drawOn(canvas, starting_width - w1, starting_height - h1)
+
+    field.drawOn(canvas, starting_width, starting_height - h1)
 
     return starting_height - h1
 
+def create_list(canvas, starting_height, starting_width, list, style):
+    bullet_list = []
+    for item in list['data']:
+        bullet_list.append(Paragraph(item, style=style))
+    list = ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
+                                   bulletFontSize=16, style=list_style)
+
+    w1, h1 = list.wrapOn(canvas, WIDTH, MAX_HEIGHT)
+    list.drawOn(canvas, starting_width - w1 + LIST_LEFT_INDENT, starting_height - h1)
+
+    return starting_height - h1
+
+
 #A resume field is a basic field that spans two columns: a header (left col) and body (right col)
-def create_resume_field(canvas, starting_height, header_text, values):
+def create_resume_field(canvas, starting_height, header_text, values, style):
     first_col = Paragraph(header_text, style=styles['Field-Header'])
     second_col = []
 
@@ -92,15 +113,38 @@ def fetch_field(resume, field_id):
 def build_resume_2(canvas, resume, starting_height):
     name = fetch_field(resume, 'Name')
 
-    starting_height = create_centered_field(canvas, starting_height, name['data'])
+    starting_height = create_centered_field(canvas, starting_height, name['data'], styles['Name'])
     starting_height -= SPACER
-    create_left_field(canvas, starting_height, fetch_field(resume, 'Address')['data'])
-    starting_height = create_right_field(canvas, starting_height, fetch_field(resume, 'Email')['data'])
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'City')['data'])
+    create_left_field(canvas, starting_height, fetch_field(resume, 'Address')['data'], styles['Normal'])
+    starting_height = create_right_field(canvas, starting_height, fetch_field(resume, 'Email')['data'], styles['right'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'City')['data'], styles['Normal'])
     starting_height -=SPACER
-    
 
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Skills')['data']['header'], styles['h2-heading'])
+    starting_height -= TITLE_SPACER
+    starting_height = create_left_list(canvas, starting_height, fetch_field(resume, 'Skills')['data']['values'][0], styles['Normal'])
+    starting_height -= SPACER
 
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Work')['data']['header'], styles['h2-heading'])
+    starting_height -= TITLE_SPACER
+
+    for work in fetch_field(resume, 'Work')['data']['values']:
+        create_left_field(canvas, starting_height, work['name']['data'] + ', ' + work['title']['data'], styles['Normal'])
+        starting_height = create_right_field(canvas, starting_height, work['dates']['data'], styles['right'])
+        starting_height -= TITLE_SPACER
+        starting_height = create_left_list(canvas, starting_height, work['description'], styles['Normal'])
+        starting_height -= SPACER
+
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Education')['data']['header'], styles['h2-heading'])
+    starting_height -= TITLE_SPACER
+
+    for ed in fetch_field(resume, 'Education')['data']['values']:
+        create_left_field(canvas, starting_height, ed['name']['data'], styles['Normal'])
+        starting_height = create_right_field(canvas, starting_height, ed['dates']['data'], styles['right'])
+
+        starting_height -= TITLE_SPACER
+        starting_height = create_left_list(canvas, starting_height, ed['description'], styles['Normal'])
+        starting_height -= SPACER
 
     return
 

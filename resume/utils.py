@@ -21,12 +21,21 @@ def create_template_2_stylesheet():
                                   alignment = 1
                                   ))
 
+    stylesheet.add(ParagraphStyle(name = 'right',
+                                  parent=stylesheet['Normal'],
+                                  fontSize = 16,
+                                  leading = 18,
+                                  fontName = 'Times-Roman',
+                                  alignment = 2
+                                  ))
+
     stylesheet.add(ParagraphStyle(name = 'h2-heading',
                                   parent=stylesheet['Normal'],
                                   fontSize = 22,
                                   leading = 24,
                                   fontName = 'Times-Roman',
-                                  alignment = 0
+                                  alignment = 0,
+                                  textTransform = 'uppercase'
                                   ))
     stylesheet.add(ListStyle(name='UnorderedList',
                                 parent=None,
