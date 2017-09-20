@@ -11,7 +11,7 @@ from . import utils
 import os
 import json
 
-styles = utils.create_stylesheet()
+styles = utils.create_template_2_stylesheet()
 style = styles['Normal']
 list_style = styles["UnorderedList"]
 
@@ -20,6 +20,8 @@ WIDTH, HEIGHT = letter
 
 TOP_MARGIN = HEIGHT - 100
 LEFT_MARGIN = 100
+
+FIRST_COL_HEADER = WIDTH/2
 
 LINE_HEIGHT = 20
 SPACER = 20
@@ -31,12 +33,18 @@ FIRST_COL_WIDTH = (WIDTH - LEFT_MARGIN)/5
 SECOND_COL_WIDTH = (WIDTH - LEFT_MARGIN) * 4/5
 SECOND_COL_START = FIRST_COL_WIDTH + LEFT_MARGIN
 
+def create_centered_field(canvas, starting_height, body):
+    return create_header_field(canvas, starting_height, WIDTH, body, styles['Name'])
+def create_left_field(canvas, starting_height, body):
+    return create_header_field(canvas, starting_height, WIDTH + LEFT_MARGIN, body, styles['Normal'])
+def create_right_field(canvas, starting_height, body):
+    return create_header_field(canvas, starting_height, WIDTH + LEFT_MARGIN + FIRST_COL_HEADER, body, styles['Normal'])
 
 #Header fields are simple fields used at the top of a resume
-def create_header_field(canvas, starting_height, body):
-    field = Paragraph(body, style=styles['Header'])
+def create_header_field(canvas, starting_height, starting_width, body, style):
+    field = Paragraph(body, style=style)
     w1, h1 = field.wrap(WIDTH, MAX_HEIGHT)
-    field.drawOn(canvas, LEFT_MARGIN, starting_height - h1)
+    field.drawOn(canvas, starting_width - w1, starting_height - h1)
 
     return starting_height - h1
 
@@ -54,7 +62,7 @@ def create_resume_field(canvas, starting_height, header_text, values):
         if field['type'] == 'paragraph' or field['type'] == 'field':
             second_col.append(Paragraph(field['data'], style=second_col_style))
         if field['type'] == 'spacer':
-            second_col.append(field);
+            second_col.append(field)
         if field['type'] == 'list':
             bullet_list = []
             for item in field['data']:
@@ -75,6 +83,26 @@ def create_resume_field(canvas, starting_height, header_text, values):
             starting_height -= h2
 
     return starting_height
+
+
+def fetch_field(resume, field_id):
+    return next(field for field in resume if field['id'] == field_id)
+
+
+def build_resume_2(canvas, resume, starting_height):
+    name = fetch_field(resume, 'Name')
+
+    starting_height = create_centered_field(canvas, starting_height, name['data'])
+    starting_height -= SPACER
+    create_left_field(canvas, starting_height, fetch_field(resume, 'Address')['data'])
+    starting_height = create_right_field(canvas, starting_height, fetch_field(resume, 'Email')['data'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'City')['data'])
+    starting_height -=SPACER
+    
+
+
+
+    return
 
 def home(request):
     return render(request, "resume/home_page.html")
@@ -100,12 +128,14 @@ def get_resume(request):
 
     starting_height = TOP_MARGIN
 
-    for field in data:
-        if field['type'] == 'single-col':
-            starting_height = create_header_field(p, starting_height, field['data'])
-        if field['type'] == 'double-col':
-            starting_height -= SPACER
-            starting_height = create_resume_field(p, starting_height, field['data']['header'], field['data']['values'])
+    build_resume_2(p, data, starting_height)
+
+    #for field in data:
+    #    if field['type'] == 'single-col':
+    #        starting_height = create_header_field(p, starting_height, field['data'])
+    #    if field['type'] == 'double-col':
+    #        starting_height -= SPACER
+    #        starting_height = create_resume_field(p, starting_height, field['data']['header'], field['data']['values'])
 
     # Close the PDF object cleanly, and we're done.
     p.showPage()
