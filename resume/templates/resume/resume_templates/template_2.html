@@ -1,0 +1,25 @@
+<script type="text/x-template" id="template-2">
+    <div class="preview-item template-2">
+        <div class="row">
+            <div class="col">
+                [resume.name.data]
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                [resume.address.data]
+                [resume.city.data]
+            </div>
+            <div class="col">
+                [resume.email.data]
+            </div>
+        </div>
+        <div class="row">
+            <h3 class="h3-heading">[resume.skills.header]</h3>
+            <ul class="preview-list" v-for="skillSet in resume.skills.data">
+                <li v-for="skill in skillSet.data">[skill]</li>
+            </ul>
+
+        </div>
+    </div>
+</script>

@@ -1,72 +1,17 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet, ListStyle, ParagraphStyle, StyleSheet1
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph, ListFlowable
 from tempfile import NamedTemporaryFile
 from django.http import JsonResponse
+
+from . import utils
+
 import os
 import json
 
-RESUME1_HEADER_COLOR = colors.Color(.75, .12, .12)
-RESUME1_FIELD_HEADER_COLOR = colors.Color(0, .5, .5)
-
-#Stylesheet used to style our PDF
-def create_stylesheet():
-    global styles, style
-
-    fontName = 'Times-Roman'
-
-    stylesheet = StyleSheet1()
-    stylesheet.add(ParagraphStyle(name = 'Normal',
-                                  fontName = fontName,
-                                  fontSize = 16,
-                                  leading = 18,
-                                  spaceAfter=5))
-
-    stylesheet.add(ParagraphStyle(name = 'Header',
-                                  parent=stylesheet['Normal'],
-                                  fontSize = 16,
-                                  leading = 18))
-
-    stylesheet.add(ParagraphStyle(name = 'Field-Header',
-                                  parent=stylesheet['Normal'],
-                                  fontSize = 16,
-                                  leading = 18,
-                                  textColor = RESUME1_FIELD_HEADER_COLOR
-                                  ))
-
-    stylesheet.add(ParagraphStyle(name = 'Rich-List-Header',
-                                  parent=stylesheet['Normal'],
-                                  fontSize = 16,
-                                  leading = 18,
-                                  fontName = 'Times-Bold'
-                                  ))
-
-    stylesheet.add(ListStyle(name='UnorderedList',
-                                parent=None,
-                                leftIndent=18,
-                                rightIndent=0,
-                                bulletAlign='left',
-                                bulletType='1',
-                                bulletColor=colors.black,
-                                bulletFontName='Times-Roman',
-                                bulletFontSize=16,
-                                bulletOffsetY=0,
-                                bulletDedent='auto',
-                                bulletDir='ltr',
-                                bulletFormat=None,
-                                #start='circle square blackstar sparkle disc diamond'.split(),
-                                start=None,
-                            ),
-                   alias='ul')
-
-    return stylesheet
-
-
-styles = create_stylesheet()
+styles = utils.create_stylesheet()
 style = styles['Normal']
 list_style = styles["UnorderedList"]
 
@@ -99,15 +44,21 @@ def create_header_field(canvas, starting_height, body):
 def create_resume_field(canvas, starting_height, header_text, values):
     first_col = Paragraph(header_text, style=styles['Field-Header'])
     second_col = []
+
     for field in values:
+        if field['style'] != '':
+            second_col_style = styles[field['style']]
+        else:
+            second_col_style = style
+
         if field['type'] == 'paragraph' or field['type'] == 'field':
-            second_col.append(Paragraph(field['data'], style=style))
+            second_col.append(Paragraph(field['data'], style=second_col_style))
         if field['type'] == 'spacer':
             second_col.append(field);
         if field['type'] == 'list':
             bullet_list = []
             for item in field['data']:
-                bullet_list.append(Paragraph(item, style=style))
+                bullet_list.append(Paragraph(item, style=second_col_style))
             second_col.append(ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
                                      bulletFontSize=16, style=list_style))
 

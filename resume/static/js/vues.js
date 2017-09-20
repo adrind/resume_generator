@@ -7,10 +7,16 @@ var skillsBloodhound = new Bloodhound({
     }
 });
 
-Vue.component('preview-field', {
+Vue.component('template1', {
     props: ['item', 'header'],
     delimiters: ["[", "]"],
-    template: '#preview-item'
+    template: '#template-1'
+});
+
+Vue.component('template2', {
+    props: ['resume'],
+    delimiters: ["[", "]"],
+    template: '#template-2'
 });
 
 Vue.component('single-col', {
@@ -219,23 +225,23 @@ var createDoubleCol = function (id, data, header, opts) {
     }
 };
 
-var createField = function (type, data, id, label, opts) {
-    if(!opts) {opts = {}};
+var createField = function (type, data, opts) {
+    if(!opts) {opts = {}}
     return {
         type: type,
-        id: id,
         isTextArea: type === 'paragraph',
         isList: type === 'list',
         isField: type === 'field',
         data: data,
-        label: label || '',
         isEditing: false,
         hasAutocomplete: opts.hasAutocomplete,
+        style: opts.style || '',
 
         serialize: function () {
             return {
                 type: this.type,
-                data: this.data
+                data: this.data,
+                style: this.style
             }
         }
     }
@@ -273,16 +279,17 @@ var app = new Vue({
     delimiters: ["[", "]"],
     el: '#resume-preview',
     data: {
-        resume: [
-            createSingleCol('Name', 'Bob Jones', 'What is your name?', {isActive: true}),
-            createSingleCol('Address', '1234 Alaska st', 'What is your address?'),
-            createSingleCol('City', 'Anchorage, AK', 'What is your city?'),
-            createSingleCol('Email', 'me@email.com', 'What is your email address?'),
-            createDoubleCol('Objective', [createField('paragraph', 'Test')], "What's your goal? What do you want to learn during your next job?", {previewHeader: 'Objective'}),
-            createDoubleCol('Skills', [createField('list', ['cooking', 'eating'], 'skills', 'Add a skill', {hasAutocomplete:true})], "What skills do you have?", {previewHeader: 'Skills'}),
-            createDoubleCol('Education', [createFieldSet([createField('field', 'School Name'), createField('field', 'August 2001 - May 2005'), createField('list', ['Graduated Summa Cum Laude']) ])], "What education do you have?", {fieldTypes: [{key: 'header', label: 'School name', type: 'field'}, {key:'dates', label: 'Years attended', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an education:', previewHeader: 'Education'}),
-            createDoubleCol('Work', [createFieldSet([createField('field', 'Work name'), createField('field', 'Dates worked'), createField('list', ['Learned']) ])], "What work have you done?", {fieldTypes: [{key: 'header', label: 'Work name', type: 'field'}, {key:'dates', label: 'Years worked', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an work:', previewHeader: 'Work'})
-        ],
+        resume: {
+            name: createSingleCol('Name', 'Bob Jones', 'What is your name?', {isActive: true}),
+            address: createSingleCol('Address', '1234 Alaska st', 'What is your address?'),
+            city: createSingleCol('City', 'Anchorage, AK', 'What is your city?'),
+            email: createSingleCol('Email', 'me@email.com', 'What is your email address?'),
+            objective: createDoubleCol('Objective', [createField('paragraph', 'Test')], "What's your goal? What do you want to learn during your next job?", {previewHeader: 'Objective'}),
+            skills: createDoubleCol('Skills', [createField('list', ['cooking', 'eating'], {hasAutocomplete:true})], "What skills do you have?", {previewHeader: 'Skills'}),
+            education: createDoubleCol('Education', [createFieldSet([createField('field', 'School Name', {style: 'bold'}), createField('field', 'August 2001 - May 2005'), createField('list', ['Graduated Summa Cum Laude']) ])], "What education do you have?", {fieldTypes: [{key: 'header', label: 'School name', type: 'field'}, {key:'dates', label: 'Years attended', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an education:', previewHeader: 'Education'}),
+            work: createDoubleCol('Work', [createFieldSet([createField('field', 'Work name', {style: 'bold'}), createField('field', 'Dates worked'), createField('list', ['Learned']) ])], "What work have you done?", {fieldTypes: [{key: 'header', label: 'Work name', type: 'field'}, {key:'dates', label: 'Years worked', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an work:', previewHeader: 'Work'})
+
+        },
         activeIndex: 0,
         newListItem: '',
         newRichListItem: {},
@@ -290,50 +297,49 @@ var app = new Vue({
     },
     methods: {
         nextButtonClicked: function (event) {
+            var resumeFields = _.keys(this.resume);
             var index = $(event.target).data('id');
+
             var activeIndex = this.activeIndex,
                 newActiveIndex = index === undefined ? activeIndex + 1 : index;
 
-            this.resume[activeIndex].isActive = false;
-            this.resume[newActiveIndex].isActive = true;
+            this.resume[resumeFields[activeIndex]].isActive = false;
+            this.resume[resumeFields[newActiveIndex]].isActive = true;
 
             this.activeIndex = newActiveIndex;
             this.isAddingNewItem = false;
         },
         backButtonClicked: function (event) {
+            var resumeFields = _.keys(this.resume);
             var activeIndex = this.activeIndex,
                 newActiveIndex = activeIndex - 1;
 
-            this.resume[activeIndex].isActive = false;
+            this.resume[resumeFields[activeIndex]].isActive = false;
 
             if(activeIndex !== 0) {
-                this.resume[activeIndex - 1].isActive = true;
+                this.resume[resumeFields[activeIndex - 1]].isActive = true;
             }
 
             this.activeIndex = newActiveIndex;
             this.isAddingNewItem = false;
         },
         addToList: function (event) {
-            var activeFrame = this.resume[this.activeIndex];
+            var resumeFields = _.keys(this.resume);
+            var activeFrame = this.resume[resumeFields[this.activeIndex]];
 
             activeFrame.list.values.push(this.newListItem);
             this.newListItem = ''
-        },
-        addToRichList: function (event) {
-            var activeFrame = this.resume[this.activeIndex];
-            activeFrame.list.values.push(this.newRichListItem);
-            this.newRichListItem = {};
-            this.isAddingNewItem = false;
         },
         addNewItem: function (event) {
           this.isAddingNewItem = true;
         },
         printResume: function (event) {
             var requestData = [];
-            this.resume.forEach(function(field){
+            _.each(this.resume, function (field, key) {
                 var serializedField = field.serialize();
                 requestData.push(serializedField);
             });
+
             var csrfmiddlewaretoken = $('.container').data('token');
 
             $.ajaxSetup({

@@ -1,19 +1,20 @@
-<script type="text/x-template" id="preview-item">
-    <div class="preview-item">
-        <h3 class="preview-header" v-if="header">[header]</h3>
+<script type="text/x-template" id="template-1">
+    <div class="preview-item template-1">
         <div v-if="item.isSingleCol" class="data">[item.data]</div>
+
+        <h3 class="preview-header" v-if="header">[header]</h3>
         <div v-if="item.isDoubleCol" class="data">
             <span v-for="field in item.data">
                 <ul class="preview-list" v-if="field.isList">
-                    <li v-for="li in field.data">[li]</li>
+                    <li v-for="li in field.data" v-bind:class="field.style">[li]</li>
                 </ul>
-                <span v-if="field.isTextArea || field.isField">[field.data]</span>
+                <span v-if="field.isTextArea || field.isField" v-bind:class="field.style">[field.data]</span>
                 <div v-if="field.isFieldSet">
                     <div class="field" v-for="f in field.fields">
                         <ul class="preview-list" v-if="f.isList">
-                            <li v-for="li in f.data">[li]</li>
+                            <li v-for="li in f.data" v-bind:class="f.style">[li]</li>
                         </ul>
-                        <span v-if="f.isTextArea || f.isField">[f.data]</span>
+                        <span v-if="f.isTextArea || f.isField" v-bind:class="f.style">[f.data]</span>
                     </div>
                 </div>
             </span>
