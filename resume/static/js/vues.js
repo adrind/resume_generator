@@ -8,7 +8,7 @@ var skillsBloodhound = new Bloodhound({
 });
 
 Vue.component('template1', {
-    props: ['item', 'header'],
+    props: ['resume'],
     delimiters: ["[", "]"],
     template: '#template-1'
 });
@@ -299,9 +299,9 @@ var app = new Vue({
             city: createSingleCol('City', 'Anchorage, AK', 'What is your city?'),
             email: createSingleCol('Email', 'me@email.com', 'What is your email address?'),
             objective: createDoubleCol('Objective', [createField('objective','paragraph', 'Test')], "What's your goal? What do you want to learn during your next job?", {previewHeader: 'Objective'}),
-            skills: createDoubleCol('Skills', [createField('skills','list', ['cooking', 'eating'], {hasAutocomplete:true})], "What skills do you have?", {previewHeader: 'Skills'}),
-            education: createDoubleCol('Education', [createFieldSet([createField('name','field', 'School Name', {style: 'bold'}), createField('dates','field', 'August 2001 - May 2005'), createField('description','list', ['Graduated Summa Cum Laude']) ])], "What education do you have?", {fieldTypes: [{key: 'name', label: 'School name', type: 'field'}, {key:'dates', label: 'Years attended', type: 'field'}, {key:'description',label:'Things you did', type: 'list'}],label: 'Add an education:', previewHeader: 'Education'}),
-            work: createDoubleCol('Work', [createFieldSet([createField('name','field', 'Work name', {style: 'bold'}), createField('title', 'field', 'Name of Position'), createField('dates','field', 'Dates worked'), createField('description','list', ['Learned']) ])], "What work have you done?", {fieldTypes: [{key: 'name', label: 'Work name', type: 'field'}, {key: 'title', label: 'Title at company', type: 'field'}, {key:'dates', label: 'Years worked', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an work:', previewHeader: 'Work'})
+            skills: createDoubleCol('Skills', [createField('skills','list', ['cooking', 'eating'], {hasAutocomplete:true})], "What skills do you have?", {previewHeader: 'Skills and Abilities'}),
+            education: createDoubleCol('Education', [createFieldSet([createField('name','field', 'School Name', {style: 'bold'}), createField('dates','field', 'August 2001 - May 2005'), createField('description','list', ['Graduated Summa Cum Laude']) ])], "What education do you have?", {fieldTypes: [{key: 'name', label: 'School name', type: 'field'}, {key:'dates', label: 'Years attended', type: 'field'}, {key:'description',label:'Things you did', type: 'list'}],label: 'Add an education:', previewHeader: 'Education and Certificates'}),
+            work: createDoubleCol('Work', [createFieldSet([createField('name','field', 'Work name', {style: 'bold'}), createField('title', 'field', 'Name of Position'), createField('dates','field', 'Dates worked'), createField('description','list', ['Learned']) ])], "What work have you done?", {fieldTypes: [{key: 'name', label: 'Work name', type: 'field'}, {key: 'title', label: 'Title at company', type: 'field'}, {key:'dates', label: 'Years worked', type: 'field'}, {key:'values',label:'Things you did', type: 'list'}],label: 'Add an work:', previewHeader: 'Experience'})
 
         },
         activeIndex: 0,

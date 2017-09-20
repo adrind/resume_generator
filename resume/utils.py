@@ -4,6 +4,7 @@ from reportlab.lib.styles import ListStyle, ParagraphStyle, StyleSheet1
 RESUME1_HEADER_COLOR = colors.Color(.75, .12, .12)
 RESUME1_FIELD_HEADER_COLOR = colors.Color(0, .5, .5)
 
+RESUME2_HEADER_COLOR = colors.Color(.18, .48, .52)
 
 def create_template_2_stylesheet():
     stylesheet = StyleSheet1()
@@ -18,7 +19,8 @@ def create_template_2_stylesheet():
                                   fontSize = 28,
                                   leading = 32,
                                   fontName = 'Times-Roman',
-                                  alignment = 1
+                                  alignment = 1,
+                                  textTransform='uppercase'
                                   ))
 
     stylesheet.add(ParagraphStyle(name = 'right',

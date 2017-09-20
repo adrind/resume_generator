@@ -1,6 +1,18 @@
 .bold {
   font-weight: bold; }
 
+.template-1 {
+  color: #333333; }
+  .template-1 h2 {
+    color: #008B8B;
+    border-bottom: 2px solid #008B8B; }
+  .template-1 .objective {
+    margin: 10px 0;
+    text-align: center;
+    font-style: italic; }
+  .template-1 .sub-header {
+    font-weight: bold; }
+
 .template-2 .resume-header {
   margin-bottom: 20px; }
 .template-2 p {
@@ -8,9 +20,8 @@
 .template-2 .name {
   text-align: center;
   font-size: 28px; }
-.template-2 .address,
-.template-2 .city {
-  text-align: center; }
+.template-2 .email {
+  text-align: right; }
 .template-2 h2 {
   text-transform: uppercase;
   font-size: 22px;
