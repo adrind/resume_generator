@@ -6,6 +6,66 @@ RESUME1_FIELD_HEADER_COLOR = colors.Color(0, .5, .5)
 
 RESUME2_HEADER_COLOR = colors.Color(.18, .48, .52)
 
+def create_template_1_stylesheet():
+    stylesheet = StyleSheet1()
+    stylesheet.add(ParagraphStyle(name = 'Normal',
+                                  fontName = 'Times-Roman',
+                                  fontSize = 16,
+                                  leading = 18,
+                                  spaceAfter=5))
+    stylesheet.add(ListStyle(name='UnorderedList',
+                                parent=None,
+                                leftIndent=18,
+                                rightIndent=0,
+                                bulletAlign='left',
+                                bulletType='1',
+                                bulletColor=colors.black,
+                                bulletFontName='Times-Roman',
+                                bulletFontSize=16,
+                                bulletOffsetY=0,
+                                bulletDedent='auto',
+                                bulletDir='ltr',
+                                bulletFormat=None,
+                                #start='circle square blackstar sparkle disc diamond'.split(),
+                                start=None,
+                            ),
+                   alias='ul')
+
+    stylesheet.add(ParagraphStyle(name = 'Header',
+                                  parent=stylesheet['Normal'],
+                                  fontSize = 28,
+                                  leading = 32,
+                                  fontName = 'Times-Roman',
+                                  textTransform='uppercase',
+                                  textColor=RESUME2_HEADER_COLOR
+                                  ))
+
+    stylesheet.add(ParagraphStyle(name = 'SectionHeader',
+                                  parent=stylesheet['Normal'],
+                                  fontSize = 24,
+                                  leading = 28,
+                                  fontName = 'Times-Roman',
+                                  textColor=RESUME2_HEADER_COLOR
+                                  ))
+
+    stylesheet.add(ParagraphStyle(name = 'SubHeader',
+                                  parent=stylesheet['Normal'],
+                                  fontSize = 18,
+                                  leading = 22,
+                                  fontName = 'Times-Bold',
+                                  ))
+
+    stylesheet.add(ParagraphStyle(name = 'Italic',
+                                  parent=stylesheet['Normal'],
+                                  fontSize = 18,
+                                  leading = 22,
+                                  fontName = 'Times-Italic',
+                                  alignment= 1
+                                  ))
+
+    return stylesheet
+
+
 def create_template_2_stylesheet():
     stylesheet = StyleSheet1()
     stylesheet.add(ParagraphStyle(name = 'Normal',
@@ -39,72 +99,6 @@ def create_template_2_stylesheet():
                                   alignment = 0,
                                   textTransform = 'uppercase'
                                   ))
-    stylesheet.add(ListStyle(name='UnorderedList',
-                                parent=None,
-                                leftIndent=18,
-                                rightIndent=0,
-                                bulletAlign='left',
-                                bulletType='1',
-                                bulletColor=colors.black,
-                                bulletFontName='Times-Roman',
-                                bulletFontSize=16,
-                                bulletOffsetY=0,
-                                bulletDedent='auto',
-                                bulletDir='ltr',
-                                bulletFormat=None,
-                                #start='circle square blackstar sparkle disc diamond'.split(),
-                                start=None,
-                            ),
-                   alias='ul')
-    return stylesheet
-
-
-def create_stylesheet():
-    global styles, style
-
-    fontName = 'Times-Roman'
-
-    stylesheet = StyleSheet1()
-    stylesheet.add(ParagraphStyle(name = 'Normal',
-                                  fontName = fontName,
-                                  fontSize = 16,
-                                  leading = 18,
-                                  spaceAfter=5))
-
-    stylesheet.add(ParagraphStyle(name = 'Header',
-                                  parent=stylesheet['Normal'],
-                                  fontSize = 16,
-                                  leading = 18))
-
-    stylesheet.add(ParagraphStyle(name = 'bold',
-                                  parent=stylesheet['Normal'],
-                                  fontSize = 16,
-                                  fontName='Times-Bold',
-                                  leading = 18))
-
-    stylesheet.add(ParagraphStyle(name = 'Field-Header',
-                                  parent=stylesheet['Normal'],
-                                  fontSize = 16,
-                                  leading = 18,
-                                  fontName='Times-Bold',
-                                  textColor = RESUME1_FIELD_HEADER_COLOR
-                                  ))
-
-    stylesheet.add(ParagraphStyle(name = 'centered',
-                                  parent=stylesheet['Normal'],
-                                  fontSize = 16,
-                                  leading = 18,
-                                  fontName = 'Times',
-                                  alignment = 1
-                                  ))
-
-    stylesheet.add(ParagraphStyle(name = 'template2-header',
-                                  parent=stylesheet['Normal'],
-                                  fontSize = 22,
-                                  leading = 18,
-                                  fontName = 'Times',
-                                  alignment = 1
-                                  ))
 
     stylesheet.add(ListStyle(name='UnorderedList',
                                 parent=None,
@@ -123,6 +117,4 @@ def create_stylesheet():
                                 start=None,
                             ),
                    alias='ul')
-
     return stylesheet
-

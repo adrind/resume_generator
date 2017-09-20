@@ -12,7 +12,6 @@ import os
 import json
 
 styles = utils.create_template_2_stylesheet()
-style = styles['Normal']
 list_style = styles["UnorderedList"]
 
 # Create your views here.
@@ -115,6 +114,7 @@ def fetch_field(resume, field_id):
     return next(field for field in resume if field['id'] == field_id)
 
 def build_resume_2(canvas, resume, starting_height):
+    styles = utils.create_template_2_stylesheet()
     name = fetch_field(resume, 'Name')
 
     starting_height = create_center_field(canvas, starting_height, name['data'], styles['Name'])
@@ -155,6 +155,50 @@ def build_resume_2(canvas, resume, starting_height):
 
     return
 
+def build_resume_1(canvas, resume, starting_height):
+    styles = utils.create_template_1_stylesheet()
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Name')['data'], styles['Header'])
+    starting_height -= TITLE_SPACER
+
+    canvas.setStrokeColor(utils.RESUME2_HEADER_COLOR)
+    draw_line(canvas, starting_height)
+    starting_height -= TITLE_SPACER
+
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Address')['data'] + ', ' + fetch_field(resume, 'City')['data'] + ' | ' + fetch_field(resume, 'Email')['data'], styles['SubHeader'])
+    starting_height -= SPACER
+
+    starting_height = create_center_field(canvas, starting_height, fetch_field(resume, 'Objective')['data']['values'][0]['data'], styles['Italic'])
+
+    starting_height -= SPACER
+
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Education')['data']['header'], styles['SectionHeader'])
+    draw_line(canvas, starting_height)
+    starting_height -= TITLE_SPACER
+
+    for ed in fetch_field(resume, 'Education')['data']['values']:
+        starting_height = create_left_field(canvas, starting_height, ed['name']['data'] + ' | ' + ed['dates']['data'], styles['SubHeader'])
+
+        starting_height -= TITLE_SPACER
+        starting_height = create_left_list(canvas, starting_height, ed['description'], styles['Normal'])
+        starting_height -= SPACER
+
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Work')['data']['header'], styles['SectionHeader'])
+    draw_line(canvas, starting_height)
+    starting_height -= TITLE_SPACER
+
+    for work in fetch_field(resume, 'Work')['data']['values']:
+        starting_height = create_left_field(canvas, starting_height, work['name']['data'] + ' | ' + work['title']['data'] + ' | ' + work['dates']['data'], styles['SubHeader'])
+        starting_height -= TITLE_SPACER
+        starting_height = create_left_list(canvas, starting_height, work['description'], styles['Normal'])
+        starting_height -= SPACER
+
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Skills')['data']['header'], styles['SectionHeader'])
+    draw_line(canvas, starting_height)
+    starting_height -= TITLE_SPACER
+    starting_height = create_left_list(canvas, starting_height, fetch_field(resume, 'Skills')['data']['values'][0], styles['Normal'])
+    starting_height -= SPACER
+
+
 def home(request):
     return render(request, "resume/home_page.html")
 
@@ -179,7 +223,7 @@ def get_resume(request):
 
     starting_height = TOP_MARGIN
 
-    build_resume_2(p, data, starting_height)
+    build_resume_1(p, data, starting_height)
 
     #for field in data:
     #    if field['type'] == 'single-col':
