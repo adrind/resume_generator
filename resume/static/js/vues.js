@@ -307,7 +307,8 @@ var app = new Vue({
         activeIndex: 0,
         newListItem: '',
         newRichListItem: {},
-        isAddingNewItem: false
+        isAddingNewItem: false,
+        templateSelected: 1
     },
     methods: {
         nextButtonClicked: function (event) {
