@@ -1,25 +1,68 @@
 <script type="text/x-template" id="template-2">
     <div class="preview-item template-2">
         <div class="row">
-            <div class="col">
+            <div class="col name">
                 [resume.name.data]
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                [resume.address.data]
-                [resume.city.data]
+        <div class="row resume-header">
+            <div class="col address">
+                <p>[resume.address.data]</p>
+                <p>[resume.city.data]</p>
             </div>
-            <div class="col">
+            <div class="col email">
                 [resume.email.data]
             </div>
         </div>
         <div class="row">
-            <h3 class="h3-heading">[resume.skills.header]</h3>
-            <ul class="preview-list" v-for="skillSet in resume.skills.data">
-                <li v-for="skill in skillSet.data">[skill]</li>
-            </ul>
-
+            <div class="col">
+                <h2>[resume.skills.previewHeader]</h2>
+                <div class="list">
+                    <ul v-for="skillSet in resume.skills.data">
+                        <li v-for="skill in skillSet.data">[skill]</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h2>[resume.work.previewHeader]</h2>
+                <div class="work-section" v-for="workSet in resume.work.data">
+                    <div class="row">
+                        <div class="col">
+                            [workSet.fields.name.data], [workSet.fields.title.data]
+                        </div>
+                        <div class="col text-right">
+                            [workSet.fields.dates.data]
+                        </div>
+                    </div>
+                    <div class="row">
+                        <ul v-if="workSet.fields.description.isList">
+                            <li v-for="skill in workSet.fields.description.data">[skill]</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h2>[resume.education.previewHeader]</h2>
+                <div class="education-section" v-for="edSet in resume.education.data">
+                    <div class="row">
+                        <div class="col">
+                            [edSet.fields.name.data]
+                        </div>
+                        <div class="col text-right">
+                            [edSet.fields.dates.data]
+                        </div>
+                    </div>
+                    <div class="row">
+                        <ul v-if="edSet.fields.description.isList">
+                            <li v-for="skill in edSet.fields.description.data">[skill]</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </script>
