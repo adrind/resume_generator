@@ -155,10 +155,6 @@ p {
     margin-bottom: 15px; /* Aligns the preview side with fields */
 }
 
-.print-btn {
-    height: 50px;
-}
-
 .preview-page {
     border: 1px solid #071C49;
     padding: 20px;

@@ -27,4 +27,20 @@
   font-size: 22px;
   border-bottom: 1px solid #071C49; }
 
+.template-3 p {
+  margin-bottom: 0; }
+.template-3 .resume-header {
+  margin-bottom: 20px; }
+.template-3 .name {
+  font-size: 22px;
+  font-weight: bold;
+  color: darkgoldenrod; }
+.template-3 .resume-preview {
+  margin-bottom: 10px; }
+.template-3 .resume-section-header {
+  color: darkgoldenrod;
+  font-weight: bold; }
+.template-3 ul {
+  padding-left: 15px; }
+
 /*# sourceMappingURL=field_styles.css.map */
