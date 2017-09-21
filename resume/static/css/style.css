@@ -227,6 +227,20 @@ p {
     width: 80%;
 }
 
+.list .item {
+    position: relative;
+}
+
+.list-item-text {
+    width: 80%;
+}
+
+.list .item .icons {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
 .new-list-item label,
 .list-label,
 .field-label {

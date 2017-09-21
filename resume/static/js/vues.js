@@ -349,10 +349,13 @@ var app = new Vue({
           this.isAddingNewItem = true;
         },
         printResume: function (event) {
-            var requestData = [];
+            var requestData = {
+                data: [],
+                template: this.templateSelected
+            };
             _.each(this.resume, function (field, key) {
                 var serializedField = field.serialize();
-                requestData.push(serializedField);
+                requestData.data.push(serializedField);
             });
 
             var csrfmiddlewaretoken = $('.container').data('token');

@@ -219,24 +219,18 @@ def get_resume(request):
 
     # Create the PDF object, using the response object as its "file."
     # This will not actually get sent back
-    p = canvas.Canvas(response, pagesize=letter)
+    resume_canvas = canvas.Canvas(response, pagesize=letter)
 
-    starting_height = TOP_MARGIN
+    if data['template'] == 1:
+        build_resume_1(resume_canvas, data['data'], TOP_MARGIN)
+    else:
+        build_resume_2(resume_canvas, data['data'], TOP_MARGIN)
 
-    build_resume_1(p, data, starting_height)
 
-    #for field in data:
-    #    if field['type'] == 'single-col':
-    #        starting_height = create_header_field(p, starting_height, field['data'])
-    #    if field['type'] == 'double-col':
-    #        starting_height -= SPACER
-    #        starting_height = create_resume_field(p, starting_height, field['data']['header'], field['data']['values'])
-
-    # Close the PDF object cleanly, and we're done.
-    p.showPage()
+    resume_canvas.showPage()
     with NamedTemporaryFile(dir=os.path.dirname(os.path.abspath(__file__))+'/tmp', delete=False) as tmp:
-        tmp.write(p.getpdfdata())
+        tmp.write(resume_canvas.getpdfdata())
 
-    p.save()
+    resume_canvas.save()
     #Send response with path of temporary file name
     return JsonResponse({'fileName': tmp.name})
