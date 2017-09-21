@@ -72,6 +72,10 @@
     margin: 0 auto;
 }
 
+.template-btn.selected {
+    border: 2px solid #071C49;
+}
+
 .suggestion-text,
 .suggestion-btns,
 .language-text {
