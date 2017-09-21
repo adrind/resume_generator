@@ -13,7 +13,7 @@
             <div v-for="fieldType in fieldTypes" v-if="showFieldTypes">
                 <label v-if="fieldType.type === 'field'" class="field-label">
                     [fieldType.label]
-                    <input v-model="newItem[fieldType.key].data"/>
+                    <input v-model="newItem[fieldType.key].data" class="newItemInput" v-bind:class="fieldType.key"/>
                 </label>
                 <label v-if="fieldType.type === 'list'" class="list-label">
                     [fieldType.label]

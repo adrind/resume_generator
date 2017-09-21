@@ -7,6 +7,15 @@ var skillsBloodhound = new Bloodhound({
     }
 });
 
+var jobsBloodhound = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+        url: 'http://api.dataatwork.org/v1/jobs/autocomplete?begins_with=%QUERY',
+        wildcard: '%QUERY'
+    }
+});
+
 Vue.component('template1', {
     props: ['resume'],
     delimiters: ["[", "]"],
@@ -42,7 +51,7 @@ Vue.component('single-col', {
 });
 
 Vue.component('double-col', {
-    props: ['field', 'header', 'fieldSet', 'fieldTypes'],
+    props: ['field', 'header', 'fieldTypes'],
     delimiters: ["[", "]"],
     data: function () {
         return {
@@ -62,14 +71,27 @@ Vue.component('double-col', {
       });
     },
     methods: {
+        editTriggered: function () {
+            var fieldsWithAutocomplete = _.filter(this.colData.fields, function (field) {
+                return field.hasAutocomplete === 'jobs';
+            });
+            if(fieldsWithAutocomplete && fieldsWithAutocomplete.length) {
+                $('.newItemInput.title').typeahead(null, {
+                    name: 'new-job',
+                    display: 'normalized_job_title',
+                    source: jobsBloodhound
+                }).bind('typeahead:select', function (ev, suggestion) {
+                    var result = suggestion.normalized_job_title;
+                    scope.newItem = result;
+                });
+            }
+        },
         editItem: function () {
             this.$emit('update:field', this.colData);
         },
-        toggleEdit: function (evt) {
-            console.log('evt', evt)
-        },
         createNewItem: function () {
             this.showFieldTypes = true;
+            this.emit('editTriggered');
         },
         addNewItem: function () {
             var fields = [];
@@ -152,14 +174,26 @@ Vue.component('list', {
     mounted: function () {
         var scope = this;
         if(this.hasAutocomplete) {
-            $('.newItemInput').typeahead(null, {
-                name: 'new-skill',
-                display: 'normalized_skill_name',
-                source: skillsBloodhound
-            }).bind('typeahead:select', function (ev, suggestion) {
-                var result = suggestion.normalized_skill_name;
-                scope.newItem = result;
-            });
+            if(this.hasAutocomplete === 'skills') {
+                $('.newItemInput').typeahead(null, {
+                    name: 'new-skill',
+                    display: 'normalized_skill_name',
+                    source: skillsBloodhound
+                }).bind('typeahead:select', function (ev, suggestion) {
+                    var result = suggestion.normalized_skill_name;
+                    scope.newItem = result;
+                });
+            }
+            if(this.hasAutocomplete === 'jobs') {
+                $('.newItemInput.title').typeahead(null, {
+                    name: 'new-job',
+                    display: 'normalized_job_title',
+                    source: jobsBloodhound
+                }).bind('typeahead:select', function (ev, suggestion) {
+                    var result = suggestion.normalized_job_title;
+                    scope.newItem = result;
+                });
+            }
         }
     },
     template: '#list',
@@ -305,9 +339,9 @@ var app = new Vue({
             city: createSingleCol('City', 'Anchorage, AK', 'What is your city?'),
             email: createSingleCol('Email', 'me@email.com', 'What is your email address?'),
             objective: createDoubleCol('Objective', [createField('objective','paragraph', 'I want to save the world!')], "What's your goal? What do you want to learn during your next job?", {previewHeader: 'Objective'}),
-            skills: createDoubleCol('Skills', [createField('skills','list', ['cooking', 'eating'], {hasAutocomplete:true})], "What skills do you have?", {previewHeader: 'Skills and Abilities'}),
+            skills: createDoubleCol('Skills', [createField('skills','list', ['cooking', 'eating'], {hasAutocomplete:'skills'})], "What skills do you have?", {previewHeader: 'Skills and Abilities'}),
             education: createDoubleCol('Education', [createFieldSet([createField('name','field', 'School Name', {style: 'bold'}), createField('dates','field', 'August 2001 - May 2005'), createField('description','list', ['Graduated Summa Cum Laude']) ])], "What education do you have?", {fieldTypes: [{key: 'name', label: 'School name', type: 'field'}, {key:'dates', label: 'Years attended', type: 'field'}, {key:'description',label:'Things you did', type: 'list'}],label: 'Add an education:', previewHeader: 'Education and Certificates'}),
-            work: createDoubleCol('Work', [createFieldSet([createField('name','field', 'Work name', {style: 'bold'}), createField('title', 'field', 'Name of Position'), createField('dates','field', 'Dates worked'), createField('description','list', ['Learned']) ])], "What work have you done?", {fieldTypes: [{key: 'name', label: 'Work name', type: 'field'}, {key: 'title', label: 'Title at company', type: 'field'}, {key:'dates', label: 'Years worked', type: 'field'}, {key:'description',label:'Things you did', type: 'list'}],label: 'Add an work:', previewHeader: 'Work and Experience'})
+            work: createDoubleCol('Work', [createFieldSet([createField('name','field', 'Work name', {style: 'bold'}), createField('title', 'field', 'Name of Position', {hasAutocomplete: 'jobs'}), createField('dates','field', 'Dates worked'), createField('description','list', ['Learned']) ])], "What work have you done?", {fieldTypes: [{key: 'name', label: 'Work name', type: 'field'}, {key: 'title', label: 'Title at company', type: 'field'}, {key:'dates', label: 'Years worked', type: 'field'}, {key:'description',label:'Things you did', type: 'list'}],label: 'Add an work:', previewHeader: 'Work and Experience'})
 
         },
         activeIndex: 0,

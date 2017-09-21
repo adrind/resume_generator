@@ -3,7 +3,7 @@
         <i v-if="!item.isEditing" class="fa fa-pencil-square-o float-right" aria-hidden="true" v-on:click="toggleEdit" tabindex="0" @keyup.enter="toggleEdit"></i>
         <div v-for="subItem in item.fields">
             <div v-if="item.isEditing">
-                <input v-if="subItem.isField" v-model="subItem.data"/>
+                <input v-if="subItem.isField" v-model="subItem.data" class="newItemInput" v-bind:class="subItem.id"/>
                 <textarea v-if="subItem.isTextArea" v-model="subItem.data"></textarea>
                 <list v-if="subItem.isList" :values.sync="subItem.data" :enableEdit="false" :hide-add="false"></list>
             </div>
