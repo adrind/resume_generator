@@ -162,6 +162,10 @@ p {
     font-family: "Times New Roman";
 }
 
+.preview-item {
+    width: 100%;
+}
+
 .preview-item h3 {
     max-width: 100px;
 }
