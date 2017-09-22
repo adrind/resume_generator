@@ -203,6 +203,9 @@ Vue.component('list', {
                 this.items.push(this.newItem);
                 this.newItem = '';
                 this.$emit('update:values', this.items);
+                if(typeof ga !== 'undefined') {
+                    ga('send', 'event', 'list', 'added', this.id, this.items.toString())
+                }
             }
         },
         updateList: function (oldVal, newVal) {
