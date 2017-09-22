@@ -348,7 +348,7 @@ var app = new Vue({
         newListItem: '',
         newRichListItem: {},
         isAddingNewItem: false,
-        templateSelected: 3
+        templateSelected: 1
     },
     methods: {
         nextButtonClicked: function (event) {

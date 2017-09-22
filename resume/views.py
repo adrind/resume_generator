@@ -37,7 +37,7 @@ def get_resume(request):
         build_resume_1(resume_canvas, data['data'])
     if data['template'] == 2:
         build_resume_2(resume_canvas, data['data'])
-    else:
+    if data['template'] == 3:
         build_resume_3(resume_canvas, data['data'])
 
     resume_canvas.showPage()
