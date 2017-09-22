@@ -25,11 +25,11 @@ SECOND_COL_START = FIRST_COL_WIDTH + PADDING
 
 
 def create_center_field(canvas, starting_height, body, style):
-    return create_basic_field(canvas, starting_height, 0, MAX_FIELD_WIDTH, body, style)
+    return create_basic_field(canvas, starting_height, 0, WIDTH, body, style)
 def create_left_field(canvas, starting_height, body, style):
     return create_basic_field(canvas, starting_height, PADDING, MAX_FIELD_WIDTH, body, style)
 def create_right_field(canvas, starting_height, body, style):
-    return create_basic_field(canvas, starting_height, 0 - PADDING, MAX_FIELD_WIDTH, body, style)
+    return create_basic_field(canvas, starting_height, 0, MAX_FIELD_WIDTH, body, style)
 
 def create_first_column_field(canvas, starting_height, body, style):
     return create_basic_field(canvas, starting_height, PADDING, FIRST_COL_WIDTH, body, style)
