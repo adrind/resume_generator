@@ -4,6 +4,16 @@
     font-family: 'Source Sans Pro', sans-serif;
 }
 
+.container .twitter-typeahead {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.container .item .twitter-typeahead {
+    width: 80%;
+    margin-bottom: 0;
+}
+
 .header {
     height: 100px;
     background-color: #071C49;
@@ -254,7 +264,6 @@ p {
 #resume-1 .preview-header {
     color: #003535;
 }
-
 
 
 @media (max-width: 500px) {

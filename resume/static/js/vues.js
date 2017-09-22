@@ -50,6 +50,30 @@ Vue.component('single-col', {
     }
 });
 
+Vue.component('typeahead', {
+    props: ['type', 'value', 'field'],
+    mounted: function () {
+        var scope = this;
+        $('.typeaheadInput').typeahead(null, {
+                name: 'new-job',
+                display: 'normalized_job_title',
+                source: jobsBloodhound
+        }).bind('typeahead:select', function (ev, suggestion) {
+                var result = suggestion.normalized_job_title;
+                scope.$refs.input.value = result;
+                scope.$emit('input', result);
+        });
+    },
+    template: '<input ref="input" v-on:input="updateValue($event.target.value)" v-bind:value="value" class="typeaheadInput">',
+    methods: {
+        updateValue: function (value) {
+            this.$refs.input.value = value;
+            // Emit the number value through the input event
+            this.$emit('input', value);
+        }
+    }
+});
+
 Vue.component('double-col', {
     props: ['field', 'header', 'fieldTypes'],
     delimiters: ["[", "]"],
@@ -71,27 +95,12 @@ Vue.component('double-col', {
       });
     },
     methods: {
-        editTriggered: function () {
-            var fieldsWithAutocomplete = _.filter(this.colData.fields, function (field) {
-                return field.hasAutocomplete === 'jobs';
-            });
-            if(fieldsWithAutocomplete && fieldsWithAutocomplete.length) {
-                $('.newItemInput.title').typeahead(null, {
-                    name: 'new-job',
-                    display: 'normalized_job_title',
-                    source: jobsBloodhound
-                }).bind('typeahead:select', function (ev, suggestion) {
-                    var result = suggestion.normalized_job_title;
-                    scope.newItem = result;
-                });
-            }
-        },
         editItem: function () {
             this.$emit('update:field', this.colData);
         },
         createNewItem: function () {
             this.showFieldTypes = true;
-            this.emit('editTriggered');
+            this.$emit('editing');
         },
         addNewItem: function () {
             var fields = [];
@@ -181,16 +190,6 @@ Vue.component('list', {
                     source: skillsBloodhound
                 }).bind('typeahead:select', function (ev, suggestion) {
                     var result = suggestion.normalized_skill_name;
-                    scope.newItem = result;
-                });
-            }
-            if(this.hasAutocomplete === 'jobs') {
-                $('.newItemInput.title').typeahead(null, {
-                    name: 'new-job',
-                    display: 'normalized_job_title',
-                    source: jobsBloodhound
-                }).bind('typeahead:select', function (ev, suggestion) {
-                    var result = suggestion.normalized_job_title;
                     scope.newItem = result;
                 });
             }

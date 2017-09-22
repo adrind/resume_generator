@@ -2,7 +2,7 @@
     <div class="list">
         <ul>
             <list-item :value.sync="data" v-for="(data, i) in items" :enable-edit="isEditing" :hide-add="hideAdd" :key="i" v-on:remove="removeFromList" v-on:update="updateList"></list-item>
-            <li v-if="!hideAdd">
+            <li class="item" v-if="!hideAdd">
                 <input v-model="newItem" @keyup.enter="addToList" class="newItemInput"/>
                 <button class="btn btn-base-alt float-right" v-on:click="addToList" v-if="!hideAdd">Add</button>
             </li>
