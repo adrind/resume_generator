@@ -201,11 +201,11 @@ Vue.component('list', {
         addToList: function () {
             if(this.newItem) {
                 this.items.push(this.newItem);
+                if(typeof ga !== 'undefined') {
+                    ga('send', 'event', 'list', 'added', this.newItem, this.items.toString())
+                }
                 this.newItem = '';
                 this.$emit('update:values', this.items);
-                if(typeof ga !== 'undefined') {
-                    ga('send', 'event', 'list', 'added', this.id, this.items.toString())
-                }
             }
         },
         updateList: function (oldVal, newVal) {
