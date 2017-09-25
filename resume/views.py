@@ -21,7 +21,7 @@ def download_resume(request):
     file = request.GET['file']
     fsock = open(file, 'rb')
     response = HttpResponse(fsock, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=myfile.pdf'
+    response['Content-Disposition'] = 'attachment; filename=resume.pdf'
 
     return response
 

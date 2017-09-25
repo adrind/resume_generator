@@ -253,6 +253,7 @@ p {
     position: absolute;
     top: 0;
     right: 0;
+    cursor: pointer;
 }
 
 .new-list-item label,
@@ -264,7 +265,6 @@ p {
 #resume-1 .preview-header {
     color: #003535;
 }
-
 
 @media (max-width: 500px) {
     .btn-answer {

@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col">
                 <h2>[resume.name.data]</h2>
-                <div class="sub-header">[resume.address.data], [resume.city.data] | [resume.email.data]</div>
+                <span class="sub-header">[resume.address.data]<span v-if="resume.address.data && resume.city.data">, </span>[resume.city.data] | [resume.email.data]<span v-if="resume.phone.data && resume.email.data"> | </span>[resume.phone.data]</span>
                 <div class="objective" v-for="objective in resume.objective.data">[objective.data]</div>
             </div>
         </div>

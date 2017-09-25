@@ -9,7 +9,7 @@ list_style = styles["UnorderedList"]
 WIDTH, HEIGHT = letter
 
 TOP_PADDING = HEIGHT - 50
-PADDING = 50
+PADDING = 30
 
 LIST_LEFT_INDENT = 10
 
@@ -106,43 +106,44 @@ def create_resume_field(canvas, starting_height, header_text, values, style):
     return starting_height
 
 def fetch_field(resume, field_id):
-    return next(field for field in resume if field['id'] == field_id)
+    field_result = next(field for field in resume if field['id'] == field_id)
+    return field_result['data']
 
 def build_resume_2(canvas, resume):
     starting_height = TOP_PADDING
 
     styles = stylesheets.create_template_2_stylesheet()
-    name = fetch_field(resume, 'Name')
 
-    starting_height = create_center_field(canvas, starting_height, name['data'], styles['Name'])
+    starting_height = create_center_field(canvas, starting_height, fetch_field(resume, 'Name'), styles['Name'])
     starting_height -= SPACER
-    create_left_field(canvas, starting_height, fetch_field(resume, 'Address')['data'], styles['Normal'])
-    starting_height = create_right_field(canvas, starting_height, fetch_field(resume, 'Email')['data'], styles['right'])
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'City')['data'], styles['Normal'])
+    create_left_field(canvas, starting_height, fetch_field(resume, 'Address'), styles['Normal'])
+    starting_height = create_right_field(canvas, starting_height, fetch_field(resume, 'Email'), styles['right'])
+    create_left_field(canvas, starting_height, fetch_field(resume, 'City'), styles['Normal'])
+    starting_height = create_right_field(canvas, starting_height, fetch_field(resume, 'Phone'), styles['right'])
     starting_height -=SPACER
 
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Skills')['data']['header'], styles['h2-heading'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Skills')['header'], styles['h2-heading'])
     draw_line(canvas, starting_height)
     starting_height -= TITLE_SPACER
-    starting_height = create_left_list(canvas, starting_height, fetch_field(resume, 'Skills')['data']['values'][0], styles['Normal'])
+    starting_height = create_left_list(canvas, starting_height, fetch_field(resume, 'Skills')['values'][0], styles['Normal'])
     starting_height -= SPACER
 
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Work')['data']['header'], styles['h2-heading'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Work')['header'], styles['h2-heading'])
     draw_line(canvas, starting_height)
     starting_height -= TITLE_SPACER
 
-    for work in fetch_field(resume, 'Work')['data']['values']:
+    for work in fetch_field(resume, 'Work')['values']:
         create_left_field(canvas, starting_height, work['name']['data'] + ', ' + work['title']['data'], styles['Normal'])
         starting_height = create_right_field(canvas, starting_height, work['dates']['data'], styles['right'])
         starting_height -= TITLE_SPACER
         starting_height = create_left_list(canvas, starting_height, work['description'], styles['Normal'])
         starting_height -= SPACER
 
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Education')['data']['header'], styles['h2-heading'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Education')['header'], styles['h2-heading'])
     draw_line(canvas, starting_height)
     starting_height -= TITLE_SPACER
 
-    for ed in fetch_field(resume, 'Education')['data']['values']:
+    for ed in fetch_field(resume, 'Education')['values']:
         create_left_field(canvas, starting_height, ed['name']['data'], styles['Normal'])
         starting_height = create_right_field(canvas, starting_height, ed['dates']['data'], styles['right'])
 
@@ -152,60 +153,88 @@ def build_resume_2(canvas, resume):
 
     return
 
+
 def build_resume_1(canvas, resume):
     starting_height = TOP_PADDING
 
     styles = stylesheets.create_template_1_stylesheet()
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Name')['data'], styles['Header'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Name'), styles['Header'])
     starting_height -= TITLE_SPACER
 
     canvas.setStrokeColor(stylesheets.RESUME2_HEADER_COLOR)
     draw_line(canvas, starting_height)
     starting_height -= TITLE_SPACER
 
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Address')['data'] + ', ' + fetch_field(resume, 'City')['data'] + ' | ' + fetch_field(resume, 'Email')['data'], styles['SubHeader'])
+    address = fetch_field(resume, 'Address')
+    city = fetch_field(resume, 'City')
+    email = fetch_field(resume, 'Email')
+    phone = fetch_field(resume, 'Phone')
+
+    address_line = address
+    contact_line = email
+    sub_head_line = ''
+
+    if city:
+        if address_line:
+            address_line = address_line + ', ' + city
+        else:
+            address_line += city
+
+    if phone:
+        if contact_line:
+            contact_line = contact_line + ' | ' + phone
+        else:
+            contact_line += phone
+
+    if address_line and contact_line:
+        sub_head_line = address_line + ' | ' + contact_line
+    else:
+        sub_head_line = address_line + contact_line
+
+    starting_height = create_left_field(canvas, starting_height, sub_head_line, styles['SubHeader'])
     starting_height -= SPACER
 
-    starting_height = create_center_field(canvas, starting_height, fetch_field(resume, 'Objective')['data']['values'][0]['data'], styles['Italic'])
+    starting_height = create_center_field(canvas, starting_height, fetch_field(resume, 'Objective')['values'][0]['data'], styles['Italic'])
 
     starting_height -= SPACER
 
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Education')['data']['header'], styles['SectionHeader'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Education')['header'], styles['SectionHeader'])
     draw_line(canvas, starting_height)
     starting_height -= TITLE_SPACER
 
-    for ed in fetch_field(resume, 'Education')['data']['values']:
+    for ed in fetch_field(resume, 'Education')['values']:
         starting_height = create_left_field(canvas, starting_height, ed['name']['data'] + ' | ' + ed['dates']['data'], styles['SubHeader'])
 
         starting_height -= TITLE_SPACER
         starting_height = create_left_list(canvas, starting_height, ed['description'], styles['Normal'])
         starting_height -= SPACER
 
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Work')['data']['header'], styles['SectionHeader'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Work')['header'], styles['SectionHeader'])
     draw_line(canvas, starting_height)
     starting_height -= TITLE_SPACER
 
-    for work in fetch_field(resume, 'Work')['data']['values']:
+    for work in fetch_field(resume, 'Work')['values']:
         starting_height = create_left_field(canvas, starting_height, work['name']['data'] + ' | ' + work['title']['data'] + ' | ' + work['dates']['data'], styles['SubHeader'])
         starting_height -= TITLE_SPACER
         starting_height = create_left_list(canvas, starting_height, work['description'], styles['Normal'])
         starting_height -= SPACER
 
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Skills')['data']['header'], styles['SectionHeader'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Skills')['header'], styles['SectionHeader'])
     draw_line(canvas, starting_height)
     starting_height -= TITLE_SPACER
-    starting_height = create_left_list(canvas, starting_height, fetch_field(resume, 'Skills')['data']['values'][0], styles['Normal'])
+    starting_height = create_left_list(canvas, starting_height, fetch_field(resume, 'Skills')['values'][0], styles['Normal'])
     starting_height -= SPACER
 
 def build_resume_3(canvas, resume):
     starting_height = TOP_PADDING
     styles = stylesheets.create_template_3_stylesheet()
 
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Name')['data'], styles['Name'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Name'), styles['Name'])
     starting_height -= TITLE_SPACER
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Address')['data'], styles['Normal'])
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'City')['data'], styles['Normal'])
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Email')['data'], styles['Normal'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Address'), styles['Normal'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'City'), styles['Normal'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Email'), styles['Normal'])
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Phone'), styles['Normal'])
     starting_height -=TITLE_SPACER
 
     canvas.setStrokeColor(stylesheets.RESUME3_HEADER_COLOR)
@@ -213,24 +242,24 @@ def build_resume_3(canvas, resume):
     draw_line(canvas, starting_height)
     starting_height -=SPACER
 
-    create_first_column_field(canvas, starting_height, fetch_field(resume, 'Objective')['data']['header'], styles['SectionHeader'])
-    starting_height = create_second_column_field(canvas, starting_height , fetch_field(resume, 'Objective')['data']['values'][0]['data'], styles['Normal'])
+    create_first_column_field(canvas, starting_height, fetch_field(resume, 'Objective')['header'], styles['SectionHeader'])
+    starting_height = create_second_column_field(canvas, starting_height , fetch_field(resume, 'Objective')['values'][0]['data'], styles['Normal'])
     starting_height -= SPACER
 
-    create_first_column_field(canvas, starting_height, fetch_field(resume, 'Skills')['data']['header'], styles['SectionHeader'])
-    starting_height = create_second_column_list(canvas, starting_height, fetch_field(resume, 'Skills')['data']['values'][0], styles['Normal'])
+    create_first_column_field(canvas, starting_height, fetch_field(resume, 'Skills')['header'], styles['SectionHeader'])
+    starting_height = create_second_column_list(canvas, starting_height, fetch_field(resume, 'Skills')['values'][0], styles['Normal'])
     starting_height -= SPACER
 
-    create_first_column_field(canvas, starting_height, fetch_field(resume, 'Education')['data']['header'], styles['SectionHeader'])
-    for ed in fetch_field(resume, 'Education')['data']['values']:
+    create_first_column_field(canvas, starting_height, fetch_field(resume, 'Education')['header'], styles['SectionHeader'])
+    for ed in fetch_field(resume, 'Education')['values']:
         starting_height = create_second_column_field(canvas, starting_height, ed['name']['data'], styles['Normal'])
         starting_height = create_second_column_field(canvas, starting_height, ed['dates']['data'], styles['Normal'])
         starting_height -= TITLE_SPACER
         starting_height = create_second_column_list(canvas, starting_height, ed['description'], styles['Normal'])
         starting_height -= SPACER
 
-    create_first_column_field(canvas, starting_height, fetch_field(resume, 'Work')['data']['header'], styles['SectionHeader'])
-    for work in fetch_field(resume, 'Work')['data']['values']:
+    create_first_column_field(canvas, starting_height, fetch_field(resume, 'Work')['header'], styles['SectionHeader'])
+    for work in fetch_field(resume, 'Work')['values']:
         starting_height = create_second_column_field(canvas, starting_height, work['name']['data'], styles['Normal'])
         starting_height = create_second_column_field(canvas, starting_height, work['dates']['data'], styles['Normal'])
         starting_height -= TITLE_SPACER

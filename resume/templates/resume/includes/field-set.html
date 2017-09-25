@@ -1,5 +1,5 @@
 <script type="text/x-template" id="field-set">
-    <div class="field-set">
+    <div class="field-set notranslate">
         <i v-if="!item.isEditing" class="fa fa-pencil-square-o float-right" aria-hidden="true" v-on:click="toggleEdit" tabindex="0" @keyup.enter="toggleEdit"></i>
         <div v-for="subItem in item.fields">
             <div v-if="item.isEditing">
