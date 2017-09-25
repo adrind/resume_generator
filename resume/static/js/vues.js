@@ -2,7 +2,7 @@ var skillsBloodhound = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     remote: {
-        url: 'http://api.dataatwork.org/v1/skills/autocomplete?begins_with=%QUERY',
+        url: 'https://api.dataatwork.org/v1/skills/autocomplete?begins_with=%QUERY',
         wildcard: '%QUERY'
     }
 });
@@ -11,7 +11,7 @@ var jobsBloodhound = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     remote: {
-        url: 'http://api.dataatwork.org/v1/jobs/autocomplete?begins_with=%QUERY',
+        url: 'https://api.dataatwork.org/v1/jobs/autocomplete?begins_with=%QUERY',
         wildcard: '%QUERY'
     }
 });
