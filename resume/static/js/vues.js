@@ -34,18 +34,17 @@ Vue.component('template3', {
     template: '#template-3'
 });
 
-Vue.component('single-col', {
-    props: ['data', 'header', 'isTextArea'],
-    delimiters: ["[", "]"],
+Vue.component('field-input', {
+    props: ['data', 'placeholder', 'id', 'isTextArea'],
     data: function () {
-        return {
-            colData: this.data
-        }
+      return {
+          inputData: this.placeholder === this.data ? '' : this.data
+      }
     },
-    template: '#single-col',
+    template: '<textarea v-if="isTextArea" v-model="inputData" :placeholder="placeholder" class="newItemInput notranslate" :class="id" v-on:keyup="editItem"/></textarea><input v-else v-model="inputData" :placeholder="placeholder" class="newItemInput notranslate" :class="id" v-on:keyup="editItem"/>',
     methods: {
         editItem: function () {
-            this.$emit('update:data', this.colData);
+            this.$emit('update:data', this.inputData);
         }
     }
 });
@@ -234,6 +233,7 @@ var createSingleCol = function (id, data, header, opts) {
         isActive: opts.isActive || false,
         isSingleCol: true,
         header: header,
+        placeholder: data,
 
         serialize: function () {
             return {
@@ -284,6 +284,7 @@ var createField = function (id, type, data, opts) {
         hasAutocomplete: opts.hasAutocomplete,
         style: opts.style || '',
         id: id,
+        placeholder: data,
 
         serialize: function () {
             return {
@@ -343,8 +344,8 @@ var app = new Vue({
             phone: createSingleCol('Phone', '1(907) 555-1234', 'What is your phone number?'),
             objective: createDoubleCol('Objective', [createField('objective','paragraph', 'I want to save the world!')], "What's your goal? What do you want to learn during your next job?", {previewHeader: 'Objective'}),
             skills: createDoubleCol('Skills', [createField('skills','list', ['Hard working and reliable', 'Proficient in Microsoft Word'], {hasAutocomplete:'skills'})], "What skills do you have?", {previewHeader: 'Skills and Abilities'}),
-            education: createDoubleCol('Education', [createFieldSet([createField('name','field', 'School Name', {style: 'bold'}), createField('dates','field', 'August 2001 - May 2005'), createField('description','list', ['Received my GED']) ])], "What education do you have?", {fieldTypes: [{key: 'name', label: 'School name', type: 'field'}, {key:'dates', label: 'Years attended', type: 'field'}, {key:'description',label:'Things you did', type: 'list'}],label: 'Add an education:', previewHeader: 'Education and Certificates'}),
-            work: createDoubleCol('Work', [createFieldSet([createField('name','field', 'Work name', {style: 'bold'}), createField('title', 'field', 'Name of Position', {hasAutocomplete: 'jobs'}), createField('dates','field', 'Dates worked'), createField('description','list', ['Learned']) ])], "What work have you done?", {fieldTypes: [{key: 'name', label: 'Work name', type: 'field'}, {key: 'title', label: 'Title at company', type: 'field'}, {key:'dates', label: 'Years worked', type: 'field'}, {key:'description',label:'Things you did', type: 'list'}],label: 'Add an work:', previewHeader: 'Work and Experience'})
+            education: createDoubleCol('Education', [createFieldSet([createField('name','field', 'UAA Community & Technical College', {style: 'bold'}), createField('dates','field', 'August 2001 - May 2003'), createField('description','list', ['Earned my Associate of Arts degree', 'Participated in various clubs']) ])], "What education do you have?", {fieldTypes: [{key: 'name', label: 'What was the name of the school or program?', type: 'field'}, {key:'dates', label: 'When did you attend?', type: 'field'}, {key:'description',label:'What certificate or degree did you earn? What skills did you learn?', type: 'list'}],label: 'Add an educational program:', previewHeader: 'Education and Certificates'}),
+            work: createDoubleCol('Work', [createFieldSet([createField('name','field', 'The Trane Company', {style: 'bold'}), createField('title', 'field', 'Administrative Assistant', {hasAutocomplete: 'jobs'}), createField('dates','field', 'June 2009 - March 2011'), createField('description','list', ['Managed the front desk', 'Organized office events']) ])], "What work have you done?", {fieldTypes: [{key: 'name', label: 'What was the name of the place you worked?', type: 'field'}, {key: 'title', label: 'What type of job did you do?', type: 'field'}, {key:'dates', label: 'When did you work here?', type: 'field'}, {key:'description',label:'What kind of things did you do?', type: 'list'}],label: 'Add work:', previewHeader: 'Work and Experience'})
 
         },
         activeIndex: 0,

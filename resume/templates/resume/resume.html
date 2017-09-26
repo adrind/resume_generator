@@ -21,8 +21,9 @@
                 <div class="resume-section">
                     <div class="row" v-for="item in resume">
                         <div class="section" v-if="item.isActive" v-bind:class="[item.id]">
-                            <div v-if="item.isSingleCol">
-                                <single-col :data.sync="item.data" :header="item.header" :is-text-area="item.isTextArea"></single-col>
+                            <div v-if="item.isSingleCol" class="single-col">
+                                <h2 class="h2-heading"><strong>[item.header]</strong></h2>
+                                <field-input :is-text-area="item.isTextArea" :data.sync="item.data" :placeholder="item.placeholder" :id="item.id"></field-input>
                             </div>
                             <div v-if="item.isDoubleCol">
                                 <double-col :field.sync="item.data" :field-set="item.fieldSet" :header="item.header" :field-types="item.fieldTypes"></double-col>
@@ -61,7 +62,6 @@
     {% include 'resume/resume_templates/template_3.html' %}
     {% include 'resume/includes/list.html' %}
     {% include 'resume/includes/list-item.html' %}
-    {% include 'resume/includes/single-col.html' %}
     {% include 'resume/includes/double-col.html' %}
     {% include 'resume/includes/field-set.html' %}
 {% endblock %}

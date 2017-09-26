@@ -4,9 +4,8 @@
         <div v-for="item in field">
             <field-set v-if="item.isFieldSet" :item="item" :enable-editing.sync="item.isEditing"></field-set>
             <div v-else>
-                <input v-if="item.isField" v-model="item.data"/>
-                <textarea v-if="item.isTextArea" v-model="item.data"></textarea>
                 <list v-if="item.isList" :values.sync="item.data" :enableEdit="false" :has-autocomplete="item.hasAutocomplete"></list>
+                <field-input v-else :id="item.id" :is-text-area="item.isTextArea" :data.sync="item.data" :placeholder="item.placeholder"></field-input>
             </div>
         </div>
         <div v-if="fieldTypes" class="newItem">
