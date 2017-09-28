@@ -16,6 +16,14 @@ var jobsBloodhound = new Bloodhound({
     }
 });
 
+Vue.directive('focus', {
+  // When the bound element is inserted into the DOM...
+  update: function (el) {
+    // Focus the element
+    el.focus()
+  }
+});
+
 Vue.component('template1', {
     props: ['resume'],
     delimiters: ["[", "]"],
@@ -87,9 +95,10 @@ Vue.component('double-col', {
     mounted: function () {
         var scope = this;
       _.each(this.fieldTypes, function (fieldType) {
+          var defaultData = fieldType.type === 'list' ? [] : ''
         scope.newItem[fieldType.key] = {
             type: fieldType.type,
-            data: ''
+            data: defaultData
         }
       });
     },
@@ -141,42 +150,16 @@ Vue.component('field-set', {
     }
 });
 
-Vue.component('list-item', {
-    props: ['value', 'enableEdit', 'hideAdd'],
-    delimiters: ["[", "]"],
-    data: function () {
-      return {
-          hasHover: false,
-          isEditing: this.enableEdit,
-          item: this.value
-      }
-    },
-    template: '#list-item',
-    methods: {
-        onHover: function () {
-            this.hasHover.toggle()
-        },
-        removeItem: function () {
-            this.$emit('remove', this.item);
-        },
-        editItem: function () {
-            this.isEditing = true;
-        },
-        updateItem: function () {
-            this.isEditing = false;
-            this.$emit('update:value', this.item);
-            this.$emit('update', this.value, this.item);
-        }
-    }
-});
-
 Vue.component('list', {
     props: ['values', 'id', 'enableEdit', 'hideAdd', 'hasAutocomplete'],
+    delimiters: ["[", "]"],
     data: function () {
         return {
             newItem: '',
-            items: this.values || [],
-            isEditing: this.enableEdit
+            items: this.values ? _.map(this.values, function (val, i) {
+                return {id: i, data: val}
+            }) : [],
+            editedItem: ''
         }
     },
     mounted: function () {
@@ -196,15 +179,22 @@ Vue.component('list', {
     },
     template: '#list',
     methods: {
-        addToList: function () {
+        add: function () {
             if(this.newItem) {
-                this.items.push(this.newItem);
+                this.values.push(this.newItem);
+                this.items.push({id: this.items.length, data: this.newItem});
                 if(typeof ga !== 'undefined') {
                     ga('send', 'event', 'list', 'added', this.newItem, this.items.toString())
                 }
                 this.newItem = '';
-                this.$emit('update:values', this.items);
             }
+        },
+        edit: function (index) {
+            this.editedItem = index;
+        },
+        save: function (index) {
+            Vue.set(this.values, index, this.items[index].data);
+            this.editedItem = '';
         },
         updateList: function (oldVal, newVal) {
             this.items = _.each(this.items, function (item, i, items) {
@@ -214,13 +204,9 @@ Vue.component('list', {
             });
             this.$emit('update:values', this.items);
         },
-        removeFromList: function (value) {
-            if(value) {
-                this.items = _.reject(this.items, function (item) {
-                    return value === item;
-                });
-                this.$emit('update:values', this.items);
-            }
+        remove: function (index) {
+            Vue.delete(this.values, index);
+            Vue.delete(this.items, index);
         }
     }
 });
@@ -314,20 +300,6 @@ var createFieldSet = function (fields) {
                data[field.id] = field
             });
             return data;
-        }
-    }
-};
-
-var createSpacer = function (px) {
-    return {
-        type: 'spacer',
-        data: px || 20,
-
-        serialize: function () {
-            return {
-                type: this.type,
-                data: this.data
-            }
         }
     }
 };

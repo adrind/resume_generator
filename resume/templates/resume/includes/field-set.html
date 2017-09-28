@@ -1,9 +1,13 @@
 <script type="text/x-template" id="field-set">
     <div class="field-set notranslate">
-        <i v-if="!item.isEditing" class="fa fa-pencil-square-o float-right" aria-hidden="true" v-on:click="toggleEdit" tabindex="0" @keyup.enter="toggleEdit"></i>
+        <p v-if="!item.isEditing" class="text-right edit-icons" @click="toggleEdit">
+            <i class="fa fa-pencil-square-o" aria-hidden="true" tabindex="0" @keyup.enter="toggleEdit"></i>Edit
+        </p>
         <div v-for="subItem in item.fields">
             <div v-if="item.isEditing">
-                <field-input v-if="subItem.isField" :data.sync="subItem.data" :placeholder="subItem.placeholder" :id="subItem.id"></field-input>
+                <field-input v-if="subItem.isField && (subItem.data === subItem.placeholder)" :data.sync="subItem.data" :placeholder="subItem.placeholder" :id="subItem.id"></field-input>
+                <field-input v-if="subItem.isField && (subItem.data !== subItem.placeholder)" :data.sync="subItem.data" :id="subItem.id"></field-input>
+
                 <textarea v-if="subItem.isTextArea" v-model="subItem.data"></textarea>
                 <list v-if="subItem.isList" :values.sync="subItem.data" :enableEdit="false" :hide-add="false"></list>
             </div>
@@ -12,6 +16,6 @@
                 <div v-else><span v-if="subItem.data">[subItem.data]</span><span v-else>[subItem.placeholder]</span></div>
             </div>
         </div>
-        <button class="btn btn-base-alt btn-base" v-if="item.isEditing" v-on:click="update">Save</button>
+        <button class="btn btn-base-alt btn-base" v-if="item.isEditing" @click="update">Save</button>
     </div>
 </script>

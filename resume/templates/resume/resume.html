@@ -34,7 +34,7 @@
                 <div class="row mt-4">
                     <div class="btn-section">
                     <button class="btn btn-base btn-base-lg mr-2" v-on:click="backButtonClicked" v-if="activeIndex != 0"><i class="fa fa-angle-left mr-2" aria-hidden="true"></i> Back</button>
-                    <button class="btn btn-base btn-base-lg float-right" v-on:click="nextButtonClicked" v-if="activeIndex != 7">Next <i class="fa fa-angle-right ml-2" aria-hidden="true"></i></button>
+                    <button class="btn btn-base btn-base-lg float-right" v-on:click="nextButtonClicked" v-if="activeIndex != 8">Next <i class="fa fa-angle-right ml-2" aria-hidden="true"></i></button>
                     </div>
                 </div>
             </div>
@@ -61,7 +61,6 @@
     {% include 'resume/resume_templates/template_2.html' %}
     {% include 'resume/resume_templates/template_3.html' %}
     {% include 'resume/includes/list.html' %}
-    {% include 'resume/includes/list-item.html' %}
     {% include 'resume/includes/double-col.html' %}
     {% include 'resume/includes/field-set.html' %}
 {% endblock %}

@@ -197,9 +197,6 @@ p {
   margin-bottom: 10px; }
 
 /* List vue */
-.list {
-  width: 80%; }
-
 .list .item {
   position: relative; }
 
@@ -210,6 +207,9 @@ p {
   position: absolute;
   top: 0;
   right: 0;
+  cursor: pointer; }
+
+.edit-icons {
   cursor: pointer; }
 
 .new-list-item label,
