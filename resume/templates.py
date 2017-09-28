@@ -47,6 +47,10 @@ def create_basic_field(canvas, starting_height, starting_x, max_width, body, sty
     field = Paragraph(body, style=style)
     w1, h1 = field.wrap(max_width, MAX_HEIGHT)
 
+    if starting_height - h1 < 0:
+        canvas.showPage()
+        starting_height = TOP_PADDING
+
     field.drawOn(canvas, starting_x, starting_height - h1)
 
     return starting_height - h1
@@ -59,6 +63,10 @@ def create_list(canvas, starting_height, starting_x, max_width, list, style):
                                    bulletFontSize=16, style=list_style)
 
     w1, h1 = list.wrapOn(canvas, max_width, MAX_HEIGHT)
+    if starting_height - h1 < 0:
+        canvas.showPage()
+        starting_height = TOP_PADDING
+
     list.drawOn(canvas, starting_x - w1, starting_height - h1)
 
     return starting_height - h1
@@ -68,42 +76,6 @@ def draw_line(canvas, starting_height):
     p.moveTo(PADDING, starting_height)
     p.lineTo(WIDTH - PADDING, starting_height)
     canvas.drawPath(p)
-
-#A resume field is a basic field that spans two columns: a header (left col) and body (right col)
-def create_resume_field(canvas, starting_height, header_text, values, style):
-    first_col = Paragraph(header_text, style=stylesheets['Field-Header'])
-    second_col = []
-
-    for field in values:
-        if field['style'] != '':
-            second_col_style = stylesheets[field['style']]
-        else:
-            second_col_style = style
-
-        if field['type'] == 'paragraph' or field['type'] == 'field':
-            second_col.append(Paragraph(field['data'], style=second_col_style))
-        if field['type'] == 'spacer':
-            second_col.append(field)
-        if field['type'] == 'list':
-            bullet_list = []
-            for item in field['data']:
-                bullet_list.append(Paragraph(item, style=second_col_style))
-            second_col.append(ListFlowable(bullet_list, bulletType='bullet', start='bulletchar', bulletFontName='Times-Roman',
-                                     bulletFontSize=16, style=list_style))
-
-    w1, h1 = first_col.wrapOn(canvas, FIRST_COL_WIDTH, MAX_HEIGHT)
-    first_col.drawOn(canvas, PADDING, starting_height - h1)
-
-    for paragraph in second_col:
-        if type(paragraph) is dict:
-            #then we know it's just a spacer
-            starting_height -= paragraph['data']
-        else:
-            w2, h2 = paragraph.wrapOn(canvas, SECOND_COL_WIDTH, MAX_HEIGHT)
-            paragraph.drawOn(canvas, SECOND_COL_START, starting_height - h2)
-            starting_height -= h2
-
-    return starting_height
 
 def fetch_field(resume, field_id):
     field_result = next(field for field in resume if field['id'] == field_id)

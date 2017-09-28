@@ -40,7 +40,6 @@ def get_resume(request):
     if data['template'] == 3:
         build_resume_3(resume_canvas, data['data'])
 
-    resume_canvas.showPage()
     with NamedTemporaryFile(dir=os.path.dirname(os.path.abspath(__file__))+'/tmp', delete=False) as tmp:
         tmp.write(resume_canvas.getpdfdata())
 
