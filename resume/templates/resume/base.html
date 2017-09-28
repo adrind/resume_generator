@@ -47,6 +47,10 @@
         </header>
 
         <div class="container mt-4" data-token="{{ csrf_token }}">
+            <div class="row welcome-text mb-4">
+                <p><strong>Welcome!</strong> This new website is still under development. </p>
+                <p>Feel free to use it and send us an email at <a href="mailto:help@resumeguide.me">help@resumeguide.me</a> to let us know what you think or any problems you have.</p>
+            </div>
             <div class="row">
                 <div class="col">
                     {% block content %}{% endblock %}
