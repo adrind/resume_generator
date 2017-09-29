@@ -77,7 +77,7 @@ def build_doc_2(resume):
     first_cell, second_cell = skills_table.rows[0].cells
 
     for i, skill in enumerate(fetch_section(resume, 'Skills')['values'][0]['data']):
-        if i % 2:
+        if not (i % 2):
             first_cell.add_paragraph(skill, style='ListBullet')
         else:
             second_cell.add_paragraph(skill, style='ListBullet')
