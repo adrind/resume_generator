@@ -29,12 +29,6 @@ var csrfTokenSetup = function () {
     });
 };
 
-Vue.directive('focus', {
-  update: function (el) {
-    el.focus()
-  }
-});
-
 Vue.component('template1', {
     props: ['resume'],
     delimiters: ["[", "]"],
@@ -198,6 +192,7 @@ Vue.component('list', {
                     ga('send', 'event', 'list', 'added', this.newItem, this.items.toString())
                 }
                 this.newItem = '';
+                $('.newItemInput').focus();
             }
         },
         edit: function (index) {
@@ -370,7 +365,7 @@ var app = new Vue({
             var activeFrame = this.resume[resumeFields[this.activeIndex]];
 
             activeFrame.list.values.push(this.newListItem);
-            this.newListItem = ''
+            this.newListItem = '';
         },
         addNewItem: function (event) {
           this.isAddingNewItem = true;
