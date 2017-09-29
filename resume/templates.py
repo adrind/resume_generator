@@ -81,51 +81,6 @@ def fetch_field(resume, field_id):
     field_result = next(field for field in resume if field['id'] == field_id)
     return field_result['data']
 
-def build_resume_2(canvas, resume):
-    starting_height = TOP_PADDING
-
-    styles = stylesheets.create_template_2_stylesheet()
-
-    starting_height = create_center_field(canvas, starting_height, fetch_field(resume, 'Name'), styles['Name'])
-    starting_height -= SPACER
-    create_left_field(canvas, starting_height, fetch_field(resume, 'Address'), styles['Normal'])
-    starting_height = create_right_field(canvas, starting_height, fetch_field(resume, 'Email'), styles['right'])
-    create_left_field(canvas, starting_height, fetch_field(resume, 'City'), styles['Normal'])
-    starting_height = create_right_field(canvas, starting_height, fetch_field(resume, 'Phone'), styles['right'])
-    starting_height -=SPACER
-
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Skills')['header'], styles['h2-heading'])
-    draw_line(canvas, starting_height)
-    starting_height -= TITLE_SPACER
-    starting_height = create_left_list(canvas, starting_height, fetch_field(resume, 'Skills')['values'][0], styles['Normal'])
-    starting_height -= SPACER
-
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Work')['header'], styles['h2-heading'])
-    draw_line(canvas, starting_height)
-    starting_height -= TITLE_SPACER
-
-    for work in fetch_field(resume, 'Work')['values']:
-        create_left_field(canvas, starting_height, work['name']['data'] + ', ' + work['title']['data'], styles['Normal'])
-        starting_height = create_right_field(canvas, starting_height, work['dates']['data'], styles['right'])
-        starting_height -= TITLE_SPACER
-        starting_height = create_left_list(canvas, starting_height, work['description'], styles['Normal'])
-        starting_height -= SPACER
-
-    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Education')['header'], styles['h2-heading'])
-    draw_line(canvas, starting_height)
-    starting_height -= TITLE_SPACER
-
-    for ed in fetch_field(resume, 'Education')['values']:
-        create_left_field(canvas, starting_height, ed['name']['data'], styles['Normal'])
-        starting_height = create_right_field(canvas, starting_height, ed['dates']['data'], styles['right'])
-
-        starting_height -= TITLE_SPACER
-        starting_height = create_left_list(canvas, starting_height, ed['description'], styles['Normal'])
-        starting_height -= SPACER
-
-    return
-
-
 def build_resume_1(canvas, resume):
     starting_height = TOP_PADDING
 
@@ -196,6 +151,50 @@ def build_resume_1(canvas, resume):
     starting_height -= TITLE_SPACER
     starting_height = create_left_list(canvas, starting_height, fetch_field(resume, 'Skills')['values'][0], styles['Normal'])
     starting_height -= SPACER
+
+def build_resume_2(canvas, resume):
+    starting_height = TOP_PADDING
+
+    styles = stylesheets.create_template_2_stylesheet()
+
+    starting_height = create_center_field(canvas, starting_height, fetch_field(resume, 'Name'), styles['Name'])
+    starting_height -= SPACER
+    create_left_field(canvas, starting_height, fetch_field(resume, 'Address'), styles['Normal'])
+    starting_height = create_right_field(canvas, starting_height, fetch_field(resume, 'Email'), styles['right'])
+    create_left_field(canvas, starting_height, fetch_field(resume, 'City'), styles['Normal'])
+    starting_height = create_right_field(canvas, starting_height, fetch_field(resume, 'Phone'), styles['right'])
+    starting_height -=SPACER
+
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Skills')['header'], styles['h2-heading'])
+    draw_line(canvas, starting_height)
+    starting_height -= TITLE_SPACER
+    starting_height = create_left_list(canvas, starting_height, fetch_field(resume, 'Skills')['values'][0], styles['Normal'])
+    starting_height -= SPACER
+
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Work')['header'], styles['h2-heading'])
+    draw_line(canvas, starting_height)
+    starting_height -= TITLE_SPACER
+
+    for work in fetch_field(resume, 'Work')['values']:
+        create_left_field(canvas, starting_height, work['name']['data'] + ', ' + work['title']['data'], styles['Normal'])
+        starting_height = create_right_field(canvas, starting_height, work['dates']['data'], styles['right'])
+        starting_height -= TITLE_SPACER
+        starting_height = create_left_list(canvas, starting_height, work['description'], styles['Normal'])
+        starting_height -= SPACER
+
+    starting_height = create_left_field(canvas, starting_height, fetch_field(resume, 'Education')['header'], styles['h2-heading'])
+    draw_line(canvas, starting_height)
+    starting_height -= TITLE_SPACER
+
+    for ed in fetch_field(resume, 'Education')['values']:
+        create_left_field(canvas, starting_height, ed['name']['data'], styles['Normal'])
+        starting_height = create_right_field(canvas, starting_height, ed['dates']['data'], styles['right'])
+
+        starting_height -= TITLE_SPACER
+        starting_height = create_left_list(canvas, starting_height, ed['description'], styles['Normal'])
+        starting_height -= SPACER
+    return
+
 
 def build_resume_3(canvas, resume):
     starting_height = TOP_PADDING

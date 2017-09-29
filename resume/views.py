@@ -6,10 +6,10 @@ from tempfile import NamedTemporaryFile
 from django.http import JsonResponse
 
 from .templates import build_resume_1, build_resume_2, build_resume_3
+from .doc_stylesheets import build_doc_1, build_doc_2, build_doc_3
 
 import os
 import json
-
 
 def home(request):
     return render(request, "resume/home_page.html")
@@ -19,9 +19,12 @@ def guide(request):
 
 def download_resume(request):
     file = request.GET['file']
+    content_type = request.GET['type']
+    file_name = request.GET['name']
+
     fsock = open(file, 'rb')
-    response = HttpResponse(fsock, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=resume.pdf'
+    response = HttpResponse(fsock, content_type=content_type)
+    response['Content-Disposition'] = 'attachment; filename='+file_name
 
     return response
 
@@ -46,3 +49,16 @@ def get_resume(request):
     resume_canvas.save()
     #Send response with path of temporary file name
     return JsonResponse({'fileName': tmp.name})
+
+def get_doc(request):
+    data = json.loads(request.body)
+
+    if data['template'] == 1:
+        name = build_doc_1(data['data'])
+    if data['template'] == 2:
+        name = build_doc_2(data['data'])
+    if data['template'] == 3:
+        name = build_doc_3(data['data'])
+
+    #Send response with path of temporary file name
+    return JsonResponse({'fileName': name})

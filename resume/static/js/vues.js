@@ -16,10 +16,21 @@ var jobsBloodhound = new Bloodhound({
     }
 });
 
+var csrfTokenSetup = function () {
+    var csrfmiddlewaretoken = $('.container').data('token');
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                // Only send the token to relative URLs i.e. locally.
+                xhr.setRequestHeader("X-CSRFToken", csrfmiddlewaretoken);
+            }
+        }
+    });
+};
+
 Vue.directive('focus', {
-  // When the bound element is inserted into the DOM...
   update: function (el) {
-    // Focus the element
     el.focus()
   }
 });
@@ -315,7 +326,7 @@ var app = new Vue({
             email: createSingleCol('Email', 'me@email.com', 'What is your email address?'),
             phone: createSingleCol('Phone', '1(907) 555-1234', 'What is your phone number?'),
             objective: createDoubleCol('Objective', [createField('objective','paragraph', 'I want to save the world!')], "What's your goal? What do you want to learn during your next job?", {previewHeader: 'Objective'}),
-            skills: createDoubleCol('Skills', [createField('skills','list', ['Hard working and reliable'], {hasAutocomplete:'skills'})], "What skills do you have?", {previewHeader: 'Skills and Abilities'}),
+            skills: createDoubleCol('Skills', [createField('skills','list', ['Hard working and reliable', 'Amillion', 'Hard working and reliable', 'Amillion', 'Hard working and reliable', 'Amillion', 'Hard working and reliable', 'Amillion', 'Hard working and reliable', 'Amillion'], {hasAutocomplete:'skills'})], "What skills do you have?", {previewHeader: 'Skills and Abilities'}),
             education: createDoubleCol('Education', [createFieldSet([createField('name','field', 'UAA Community & Technical College', {style: 'bold'}), createField('dates','field', 'August 2001 - May 2003'), createField('description','list', ['Earned my Associate of Arts degree', 'Participated in various clubs']) ])], "What education do you have?", {fieldTypes: [{key: 'name', label: 'What was the name of the school or program?', type: 'field'}, {key:'dates', label: 'When did you attend?', type: 'field'}, {key:'description',label:'What certificate or degree did you earn? What skills did you learn?', type: 'list'}],label: 'Add an educational program:', previewHeader: 'Education and Certificates'}),
             work: createDoubleCol('Work', [createFieldSet([createField('name','field', 'The Trane Company', {style: 'bold'}), createField('title', 'field', 'Administrative Assistant', {hasAutocomplete: 'jobs'}), createField('dates','field', 'June 2009 - March 2011'), createField('description','list', ['Managed the front desk', 'Organized office events']) ])], "What work have you done?", {fieldTypes: [{key: 'name', label: 'What was the name of the place you worked?', type: 'field'}, {key: 'title', label: 'What type of job did you do?', type: 'field'}, {key:'dates', label: 'When did you work here?', type: 'field'}, {key:'description',label:'What kind of things did you do?', type: 'list'}],label: 'Add work:', previewHeader: 'Work and Experience'})
 
@@ -364,36 +375,32 @@ var app = new Vue({
         addNewItem: function (event) {
           this.isAddingNewItem = true;
         },
-        printResume: function (event) {
+        printResume: function (type) {
             var requestData = {
                 data: [],
                 template: this.templateSelected
             };
+            var url = type === 'pdf' ? "/resume/print" : '/resume/doc',
+                contentType = type === 'pdf' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                fileName = type === 'pdf' ? 'resume.pdf' : 'resume.docx';
+
             _.each(this.resume, function (field, key) {
                 var serializedField = field.serialize();
                 requestData.data.push(serializedField);
             });
 
-            var csrfmiddlewaretoken = $('.container').data('token');
 
-            $.ajaxSetup({
-                beforeSend: function(xhr, settings) {
-                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                        // Only send the token to relative URLs i.e. locally.
-                        xhr.setRequestHeader("X-CSRFToken", csrfmiddlewaretoken);
-                    }
-                }
-            });
 
+            csrfTokenSetup();
             $.ajax({
                 cache: false,
-                url : "/resume/print",
+                url : url,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(requestData),
                 processData: false,
                 success : function(response){
-                    window.location = '/resume/download?file='+response.fileName;
+                    window.location = '/resume/download?file='+response.fileName+'&type='+contentType+'&name='+fileName;
                 },
                 error : function(callback){
 

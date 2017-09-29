@@ -1,7 +1,13 @@
+certifi==2017.7.27.1
+chardet==3.0.4
 Django==1.11.4
+idna==2.6
 lxml==3.8.0
 olefile==0.44
 Pillow==4.2.1
+python-docx==0.8.6
 pytz==2017.2
 reportlab==3.4.0
+requests==2.18.4
+urllib3==1.22
 whitenoise==3.3.0

@@ -14,7 +14,7 @@
             </li>
 
             <li class="item" v-if="!hideAdd">
-                <input v-model="newItem" @keyup.enter="add" class="newItemInput" v-focus/>
+                <input v-model="newItem" @keyup.enter="add" class="newItemInput"/>
                 <button class="btn btn-base-alt float-right" @click="add" @keyup.enter="add" v-if="!hideAdd">Add</button>
             </li>
         </ul>
