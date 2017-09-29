@@ -1,3 +1,6 @@
+.underline {
+  text-decoration: underline; }
+
 .welcome-text {
   font-size: 18px; }
   .welcome-text p {
