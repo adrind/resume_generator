@@ -45,9 +45,16 @@
                         <button class="btn btn-base-alt template-btn" v-on:click="templateSelected = 2" v-bind:class="{selected: templateSelected == 2}"><span v-if="templateSelected == 2">Resume </span>2</button>
                         <button class="btn btn-base-alt template-btn" v-on:click="templateSelected = 3" v-bind:class="{selected: templateSelected == 3}"><span v-if="templateSelected == 3">Resume </span>3</button>
                     </div>
-                    <div class="col-5 text-right">
-                        <button class="btn btn-base" @click="printResume('doc')"><i class="fa fa-print" aria-hidden="true"></i> Download DOC </button>
-                        <button class="btn btn-base" @click="printResume('pdf')"><i class="fa fa-print" aria-hidden="true"></i> Download PDF </button>
+                    <div class="col-5">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i aria-hidden="true" class="fa fa-print"></i> Download your resume
+                            </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" href="#" @click="printResume('doc')">Download as .docx file (you can edit it later)</a>
+                            <a class="dropdown-item" href="#" @click="printResume('pdf')">Download as .pdf file (you cannot edit this)</a>
+                          </div>
+                        </div>
                     </div>
                 </div>
                 <div class="preview-page row notranslate" id="resume-2">
