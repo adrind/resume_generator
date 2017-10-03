@@ -198,8 +198,8 @@ Vue.component('list', {
                 if(!this.values) {this.values = [];}
                 this.values.push(this.newItem);
                 this.items.push({id: this.items.length, data: this.newItem});
-                if(typeof ga !== 'undefined') {
-                    ga('send', 'event', 'list', 'added', this.newItem, this.items.toString())
+                if(typeof gatag !== 'undefined') {
+                    gatag('event', 'addedToList', {item: this.newItem});
                 }
                 this.newItem = '';
                 $('.newItemInput').focus();
