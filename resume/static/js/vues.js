@@ -186,6 +186,7 @@ Vue.component('list', {
     methods: {
         add: function () {
             if(this.newItem) {
+                if(!this.values) {this.values = [];}
                 this.values.push(this.newItem);
                 this.items.push({id: this.items.length, data: this.newItem});
                 if(typeof ga !== 'undefined') {

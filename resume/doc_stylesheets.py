@@ -1,18 +1,67 @@
 import os
 
 from docx import Document
-from docx.shared import Pt
+from docx.shared import Pt, RGBColor
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 EMU_PER_INCH = 91440
+
+def format_doc_1_address_line(resume):
+    address = resume('Address')
+    city = resume('City')
+    email = resume('Email')
+    phone = resume('Phone')
+
+    line = address
+
+    if line and city:
+        line = line + ' ' + city
+    else:
+        line = city
+
+    if line and email:
+        line = line + ' | ' + email
+    else:
+        line = email
+
+    if line and phone:
+        line = line + ' | ' + phone
+    else:
+        line = phone
+
+    return line
+
+def set_doc_1_styles(styles):
+    styles['Heading 1'].font.size = Pt(28)
+    styles['Heading 1'].font.color.rgb = RGBColor(0x2E, 0x7B, 0x86)
+    styles['Heading 1'].font.underline = True
+    styles['Heading 1'].font.bold = False
+
+    styles.add_style('Address Line', WD_STYLE_TYPE.PARAGRAPH)
+    styles['Address Line'].font.size = Pt(12)
+    styles['Address Line'].font.bold = True
+
+    styles.add_style('Objective', WD_STYLE_TYPE.PARAGRAPH)
+    styles['Objective'].font.italic = True
+    styles['Objective'].font.size = Pt(12)
+
+    styles.add_style('Section Header', WD_STYLE_TYPE.PARAGRAPH)
+    styles['Section Header'].font.size = Pt(18)
+    styles['Section Header'].font.color.rgb = RGBColor(0x2E, 0x7B, 0x86)
+    styles['Section Header'].font.underline = True
+
+    styles.add_style('Section Subheader', WD_STYLE_TYPE.PARAGRAPH)
+    styles['Section Subheader'].font.size = Pt(12)
+    styles['Section Subheader'].font.bold = True
+    styles['Section Subheader'].font.all_caps = True
+
 
 def set_doc_2_styles(styles):
     styles['Heading 1'].font.size = Pt(16)
     first_col_style = styles.add_style('First Col', WD_STYLE_TYPE.PARAGRAPH)
     first_col_style.base_style = styles['Normal']
     first_col_style.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-
 
 def init_resume_data(resume):
     return lambda id: next(field for field in resume if field['id'] == id)['data']
@@ -26,26 +75,30 @@ def build_doc_1(resume):
     file_name = os.path.dirname(os.path.abspath(__file__))+'/tmp/test.docx'
     document = Document()
 
-    document.add_heading(fetch_field('Name'), 0)
+    set_doc_1_styles(document.styles)
 
-    document.add_paragraph(fetch_field('Address') + ' | ' + fetch_field('City'), style='Normal')
-    document.add_paragraph(fetch_field('Objective')['values'][0]['data'], style='Normal')
+    document.add_paragraph(fetch_field('Name'), style='Heading 1')
 
-    document.add_heading('Education & Certificates', 1)
+    document.add_paragraph(format_doc_1_address_line(fetch_field), style='Address Line')
+    objective = document.add_paragraph(fetch_field('Objective')['values'][0]['data'], style='Objective')
+
+    objective.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+    document.add_paragraph('Education & Certificates', style='Section Header')
 
     for ed in fetch_section(resume, 'Education')['values']:
-        document.add_heading(ed['name']['data'] + ' | ' + ed['dates']['data'], 2)
+        document.add_paragraph(ed['name']['data'] + ' | ' + ed['dates']['data'], style='Section Subheader')
         for item in ed['description']['data']:
             document.add_paragraph(item, style='ListBullet')
 
-    document.add_heading('Experience', 1)
+    document.add_paragraph('Experience', 'Section Header')
 
     for work in fetch_section(resume, 'Work')['values']:
-        document.add_heading(work['name']['data'] + ' | ' + work['title']['data'] + ' | ' + work['dates']['data'], 2)
+        document.add_paragraph(work['name']['data'] + ' | ' + work['title']['data'] + ' | ' + work['dates']['data'], style='Section Subheader')
         for item in work['description']['data']:
             document.add_paragraph(item, style='ListBullet')
 
-    document.add_heading('Skills', 1)
+    document.add_paragraph('Skills', style='Section Header')
     for skill in fetch_section(resume, 'Skills')['values'][0]['data']:
         document.add_paragraph(skill, style='ListBullet')
 
