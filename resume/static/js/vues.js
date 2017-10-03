@@ -199,7 +199,7 @@ Vue.component('list', {
                 this.values.push(this.newItem);
                 this.items.push({id: this.items.length, data: this.newItem});
                 if(typeof gtag !== 'undefined') {
-                    gtag('event', 'addedToList', {item: this.newItem});
+                    gtag('event', 'list', {event_category: 'add', event_label: this.newItem});
                 }
                 this.newItem = '';
                 $('.newItemInput').focus();
