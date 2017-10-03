@@ -58,17 +58,18 @@
             </div>
         </div>
 
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106820714-1"></script>
         <script>
+        <!-- Global Site Tag (gtag.js) - Google Analytics -->
             if(window.location.hostname === 'www.resumeguide.me') {
-                <!-- Global Site Tag (gtag.js) - Google Analytics -->
-                <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106820714-1"></script>
-                <script>
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments)};
-                  gtag('js', new Date());
 
-                  gtag('config', 'UA-106820714-1');
-                </script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag() {
+                    dataLayer.push(arguments)
+                };
+                gtag('js', new Date());
+
+                gtag('config', 'UA-106820714-1');
             }
         </script>
         {# Global javascript #}
