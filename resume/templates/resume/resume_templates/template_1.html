@@ -13,7 +13,7 @@
                 <div class="education-section" v-for="edSet in resume.education.data">
                     <div class="row">
                         <div class="col sub-header">
-                            [edSet.fields.name.data] | [edSet.fields.dates.data]
+                            [edSet.fields.name.data]<span v-if="edSet.fields.dates.data"> | [edSet.fields.dates.data]</span>
                         </div>
                     </div>
                     <div class="row">
@@ -30,7 +30,7 @@
                 <div class="work-section" v-for="workSet in resume.work.data">
                     <div class="row">
                         <div class="col sub-header">
-                            [workSet.fields.name.data] | [workSet.fields.title.data] | [workSet.fields.dates.data]
+                            [workSet.fields.name.data]<span v-if="workSet.fields.title.data"> | [workSet.fields.title.data]</span><span v-if="workSet.fields.dates.data"> | [workSet.fields.dates.data]</span>
                         </div>
                     </div>
                     <div class="row">

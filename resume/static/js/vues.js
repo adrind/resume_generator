@@ -16,6 +16,14 @@ var jobsBloodhound = new Bloodhound({
     }
 });
 
+Vue.directive('focus', {
+  // When the bound element is inserted into the DOM...
+  inserted: function (el) {
+    // Focus the element
+    el.focus()
+  }
+});
+
 var csrfTokenSetup = function () {
     var csrfmiddlewaretoken = $('.container').data('token');
 
@@ -51,10 +59,11 @@ Vue.component('field-input', {
     props: ['data', 'placeholder', 'id', 'isTextArea'],
     data: function () {
       return {
-          inputData: this.placeholder === this.data ? '' : this.data
+          inputData: this.placeholder === this.data ? '' : this.data,
+          placeholderText: this.placeholder === this.data ? this.placeholder : ''
       }
     },
-    template: '<textarea v-if="isTextArea" v-model="inputData" :placeholder="placeholder" class="newItemInput notranslate" :class="id" v-on:keyup="editItem"/></textarea><input v-else v-model="inputData" :placeholder="placeholder" class="newItemInput notranslate" :class="id" v-on:keyup="editItem"/>',
+    template: '<textarea v-if="isTextArea" v-model="inputData" :placeholder="placeholder" class="newItemInput notranslate" :class="id" v-on:keyup="editItem"/></textarea><input v-else v-model="inputData" :placeholder="placeholderText" class="newItemInput notranslate" :class="id" v-on:keyup="editItem"/>',
     methods: {
         editItem: function () {
             this.$emit('update:data', this.inputData);
