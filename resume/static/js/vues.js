@@ -394,7 +394,9 @@ var app = new Vue({
                 requestData.data.push(serializedField);
             });
 
-
+            if(typeof gtag !== 'undefined') {
+                gtag('event', 'download', {event_category: 'engagement', event_label: type});
+            }
 
             csrfTokenSetup();
             $.ajax({
