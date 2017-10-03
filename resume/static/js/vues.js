@@ -395,7 +395,7 @@ var app = new Vue({
             });
 
             if(typeof gtag !== 'undefined') {
-                gtag('event', 'download', {event_category: 'engagement', event_label: type});
+                gtag('event', 'download', {event_category: type, event_label: this.templateSelected});
             }
 
             csrfTokenSetup();
