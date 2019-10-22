@@ -6,7 +6,7 @@ gunicorn==19.7.1
 idna==2.6
 lxml==3.8.0
 olefile==0.44
-Pillow==4.2.1
+Pillow==6.2.0
 python-docx==0.8.6
 pytz==2017.2
 reportlab==3.4.0
