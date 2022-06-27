@@ -9,7 +9,7 @@ olefile==0.44
 Pillow==4.2.1
 python-docx==0.8.6
 pytz==2017.2
-reportlab==3.4.0
+reportlab==3.5.55
 requests==2.18.4
 urllib3==1.22
 whitenoise==3.3.0
