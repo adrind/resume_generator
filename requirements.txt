@@ -4,7 +4,7 @@ Django==1.11.4
 docx==0.2.4
 gunicorn==19.7.1
 idna==2.6
-lxml==3.8.0
+lxml==4.9.1
 olefile==0.44
 Pillow==4.2.1
 python-docx==0.8.6
